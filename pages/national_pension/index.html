@@ -340,6 +340,8 @@
         </div>
         <div class="disclaimer">
           ⚠️ 본 계산은 공개된 산정식을 단순화한 <strong>참고용 추정치</strong>입니다.
+          <strong>2026년 A값 3,193,511원</strong> 기준이며, A값은 매년 바뀝니다.
+          부양가족연금액과 가입 시기별 비례상수는 반영하지 않아 실제보다 다소 낮게 나옵니다.
           실제 연금액은 A값·재평가율·부양가족연금 등에 따라 달라지며,
           정확한 예상액은 <a href="https://www.nps.or.kr" target="_blank" rel="noopener">국민연금공단(NPS)</a>
           「내 연금 알아보기」에서 확인하세요.
@@ -470,7 +472,10 @@
   navUl.addEventListener('click',e=>{if(e.target.tagName==='A')navUl.classList.remove('open')});
 
   /* ── 계산기 ── */
-  const A_VALUE=2989237;          // 2024년 A값(전체 가입자 3년 평균소득월액) - 참고 상수
+  // A값 = 연금 수급 직전 3년간 전체 가입자 평균소득월액의 평균. 매년 바뀐다.
+  // 2026년 기준값(국민연금공단). 감액 기준 5,193,511원 = A값 + 200만원과도 맞물린다.
+  const A_VALUE=3193511;
+  const A_VALUE_YEAR='2026';
   const CONSTANT=1.2;             // 비례상수(소득대체율 반영)
   const RATE=0.09;                // 보험료율 9%
 
