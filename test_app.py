@@ -114,6 +114,22 @@ check(
     hub_page.index('href="/insurance/life"') < hub_page.index('href="/insurance/damage"'),
 )
 
+print("보험 탭이 본문 바탕 위의 폴더 탭 모양이다")
+tab_css = client.get("/insurance/life").get_data(as_text=True)
+check("탭 바 바탕이 본문과 같은 --paper", "background: var(--paper, var(--bg, transparent))" in tab_css)
+check("옛 어두운 바탕 제거됨", "background: #1c231a" not in tab_css)
+check("탭마다 테두리", "border: 1px solid var(--line, var(--border, currentColor))" in tab_css)
+check("위쪽만 둥근 탭 모양", "border-radius: 7px 7px 0 0" in tab_css)
+check("이웃 탭과 테두리 공유(붙임)", "margin-right: -1px" in tab_css)
+check("안 눌린 탭은 --card-stub", "background: var(--card-stub, transparent)" in tab_css)
+check("눌린 탭은 아래 선이 끊김", "border-bottom-color: transparent" in tab_css)
+check("탭이 올라앉는 밑줄", "border-bottom: 1px solid var(--line, var(--border, currentColor))" in tab_css)
+for route in ["/insurance", "/insurance/damage", "/insurance/life",
+              "/insurance/whole-life", "/insurance/term-life", "/insurance/variable"]:
+    body = client.get(route).get_data(as_text=True)
+    check(f"{route} --card-stub 정의됨", "--card-stub" in body)
+    check(f"{route} --paper 정의됨", "--paper" in body)
+
 print("보험 탭에서 현재 상품이 활성 표시된다")
 for route, expected in [
     ("/insurance/whole-life", "종신보험"),

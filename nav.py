@@ -74,18 +74,36 @@ _NAV_CSS = """
   .ta-tabs {
     position: sticky; top: var(--ta-nav-h); z-index: 9998;
     display: flex;
-    background: #1c231a; border-bottom: 1px solid #3a4536;
+    /* 바탕은 본문과 같은 색. 탭이 놓인 선반 역할만 한다. */
+    background: var(--paper, var(--bg, transparent));
     font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
     font-size: 14px;
+    padding-top: 8px;
   }
-  .ta-tabs .ta-inner { --ta-item-pad: 16px; align-items: stretch; }
+  /* 탭이 올라앉는 밑줄. .ta-inner 폭(본문 칼럼)에 맞춰 그린다. */
+  .ta-tabs .ta-inner {
+    --ta-item-pad: 0px; align-items: stretch;
+    border-bottom: 1px solid var(--line, var(--border, currentColor));
+  }
   .ta-tabs a {
-    color: #b7bfae; text-decoration: none; white-space: nowrap;
-    padding: 12px 16px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    color: var(--ink-soft, var(--muted, inherit)); text-decoration: none; white-space: nowrap;
+    padding: 9px 18px;
+    background: var(--card-stub, transparent);
+    border: 1px solid var(--line, var(--border, currentColor));
+    border-radius: 7px 7px 0 0;
+    /* 이웃 탭과 테두리를 겹쳐 한 줄로 공유한다 → 탭끼리 붙는다. */
+    margin-right: -1px;
+    /* 밑줄 위로 1px 내려앉아, 선택된 탭이 본문과 이어질 수 있게 한다. */
+    margin-bottom: -1px;
   }
-  .ta-tabs a:hover { color: #eef0ea; }
+  .ta-tabs a:hover { color: var(--ink, inherit); }
+  /* 눌린 탭: 본문과 같은 바탕이 되고 아래 선이 끊겨 본문으로 이어진다. */
   .ta-tabs a[aria-current="page"] {
-    color: #e07a5f; border-bottom-color: #e07a5f; font-weight: 700;
+    background: var(--paper, var(--bg, transparent));
+    border-bottom-color: transparent;
+    color: var(--accent, var(--brand, inherit));
+    font-weight: 700;
+    position: relative; z-index: 1;
   }
 </style>
 """

@@ -7,12 +7,12 @@ HTML = """<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>보험 안내 | NextFinUp 종합자산관리</title>
 <style>
-  :root { color-scheme: light dark; --ink:#1f2e28; --paper:#f1ede1; --card:#fffcf5; --line:#d8d0ba; --accent:#a13d2e; }
+  :root { color-scheme: light dark; --ink:#1f2e28; --ink-soft:#536056; --paper:#f1ede1; --card:#fffcf5; --card-stub:#e8e2ce; --line:#d8d0ba; --accent:#a13d2e; }
   @media (prefers-color-scheme: dark) {
-    :root { --ink:#eef0ea; --paper:#12160f; --card:#1c231a; --line:#3a4536; --accent:#e07a5f; }
+    :root { --ink:#eef0ea; --ink-soft:#b7bfae; --paper:#12160f; --card:#1c231a; --card-stub:#262f22; --line:#3a4536; --accent:#e07a5f; }
   }
-  :root[data-theme="dark"] { --ink:#eef0ea; --paper:#12160f; --card:#1c231a; --line:#3a4536; --accent:#e07a5f; }
-  :root[data-theme="light"] { --ink:#1f2e28; --paper:#f1ede1; --card:#fffcf5; --line:#d8d0ba; --accent:#a13d2e; }
+  :root[data-theme="dark"] { --ink:#eef0ea; --ink-soft:#b7bfae; --paper:#12160f; --card:#1c231a; --card-stub:#262f22; --line:#3a4536; --accent:#e07a5f; }
+  :root[data-theme="light"] { --ink:#1f2e28; --ink-soft:#536056; --paper:#f1ede1; --card:#fffcf5; --card-stub:#e8e2ce; --line:#d8d0ba; --accent:#a13d2e; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--paper); color:var(--ink); line-height:1.6;
          font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif; }
