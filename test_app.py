@@ -102,6 +102,17 @@ for route in ["/national-pension", "/national-pension/strategy"]:
     check(f"{route} 다크모드 지원", "prefers-color-scheme" in body)
     check(f"{route} 공통 accent 사용", "#a13d2e" in body)
 
+print("국민연금 계산기가 총 납입금액 입력도 받는다")
+calc = client.get("/national-pension").get_data(as_text=True)
+check("입력 방식 전환 버튼", 'id="modePaid"' in calc and 'id="modeIncome"' in calc)
+check("총 납입금액 입력칸", 'id="paidTotal"' in calc)
+check("소득 입력칸 유지", 'id="income"' in calc)
+check("역산 결과 표시 행", 'id="incomeOut"' in calc)
+check("상한 초과 안내문", 'id="capNote"' in calc)
+check("역산 공식(RATE*yr*12로 나눔)", "totalPaid/(RATE*yr*12)" in calc)
+check("상한 상수 정의", "INCOME_CAP=6170000" in calc)
+check("상한을 넘으면 안내문 노출", "capNote.hidden = !(mode==='paid' && rawB>INCOME_CAP)" in calc)
+
 print("보험 탭 순서")
 check(
     "생명보험이 손해보험보다 앞",

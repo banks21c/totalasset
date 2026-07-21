@@ -122,6 +122,17 @@
     font-size:1rem;transition:border .15s;
   }
   .field input:focus{outline:none;border-color:var(--brand)}
+  /* 입력 방식 전환 (월평균소득 / 총 납입금액) */
+  .mode-row{display:flex;gap:0}
+  .mode-btn{
+    flex:1;padding:11px 12px;font:inherit;font-size:.94rem;font-weight:700;cursor:pointer;
+    background:var(--card-stub);color:var(--muted);
+    border:1px solid var(--border);
+  }
+  .mode-btn:first-child{border-radius:10px 0 0 10px}
+  .mode-btn:last-child{border-radius:0 10px 10px 0;margin-left:-1px}
+  .mode-btn:hover{color:var(--text)}
+  .mode-btn.is-on{background:var(--brand);color:var(--on-brand);border-color:var(--brand);position:relative;z-index:1}
   .range-wrap{display:flex;align-items:center;gap:14px}
   .range-wrap input[type=range]{flex:1;accent-color:var(--brand)}
   .range-wrap output{min-width:70px;font-weight:800;color:var(--brand);text-align:right}
@@ -274,10 +285,26 @@
     <div class="calc">
       <div class="calc-form">
         <div class="field">
+          <label>무엇을 아시나요?
+            <span class="hint">— 둘 중 아는 쪽으로 계산합니다</span>
+          </label>
+          <div class="mode-row" role="radiogroup" aria-label="입력 방식">
+            <button type="button" class="mode-btn is-on" id="modeIncome" role="radio" aria-checked="true">월 평균 소득</button>
+            <button type="button" class="mode-btn" id="modePaid" role="radio" aria-checked="false">총 납입금액</button>
+          </div>
+        </div>
+        <div class="field" id="incomeField">
           <label for="income">월 평균 소득 (기준소득월액)
             <span class="hint">— 가입기간 중 본인의 평균 월소득</span>
           </label>
           <input type="number" id="income" value="3000000" min="350000" max="6170000" step="100000">
+        </div>
+        <div class="field" id="paidField" hidden>
+          <label for="paidTotal">지금까지 낸 보험료 총액
+            <span class="hint">— 본인 부담분이 아니라 사업장 부담을 포함한 전체</span>
+          </label>
+          <input type="number" id="paidTotal" value="64800000" min="0" step="1000000">
+          <p class="hint" style="margin-top:6px">가입기간과 함께 월 평균 소득을 역산합니다.</p>
         </div>
         <div class="field">
           <label for="years">총 가입 기간
@@ -305,7 +332,12 @@
         <div class="result-row"><span>예상 연 수령액</span><span id="yearly">–</span></div>
         <div class="result-row"><span>기본 연금액 (정상수령 기준)</span><span id="base">–</span></div>
         <div class="result-row"><span>조기·연기 조정률</span><span id="adjust">–</span></div>
-        <div class="result-row"><span>총 납부 예상액</span><span id="paid">–</span></div>
+        <div class="result-row"><span id="incomeLabel">월 평균 소득</span><span id="incomeOut">–</span></div>
+        <div class="result-row"><span id="paidLabel">총 납부 예상액</span><span id="paid">–</span></div>
+        <div class="disclaimer" id="capNote" hidden>
+          역산된 월 평균 소득이 <strong>기준소득월액 상한(617만원)</strong>을 넘어 상한값으로 계산했습니다.
+          실제로는 상한을 넘는 소득만큼 연금액이 더 늘지 않습니다.
+        </div>
         <div class="disclaimer">
           ⚠️ 본 계산은 공개된 산정식을 단순화한 <strong>참고용 추정치</strong>입니다.
           실제 연금액은 A값·재평가율·부양가족연금 등에 따라 달라지며,
@@ -442,7 +474,17 @@
   const CONSTANT=1.2;             // 비례상수(소득대체율 반영)
   const RATE=0.09;                // 보험료율 9%
 
+  const INCOME_CAP=6170000;       // 기준소득월액 상한
+
   const income=document.getElementById('income');
+  const paidTotal=document.getElementById('paidTotal');
+  const incomeField=document.getElementById('incomeField');
+  const paidField=document.getElementById('paidField');
+  const modeIncome=document.getElementById('modeIncome');
+  const modePaid=document.getElementById('modePaid');
+  const capNote=document.getElementById('capNote');
+  let mode='income';              // 'income' | 'paid'
+
   const years=document.getElementById('years');
   const yearsOut=document.getElementById('yearsOut');
   const age=document.getElementById('age');
@@ -458,10 +500,36 @@
   years.addEventListener('input',()=>yearsOut.textContent=years.value+'년');
   age.addEventListener('input',()=>ageOut.textContent=adjLabel(+age.value));
 
+  /* 입력 방식 전환. 총 납입금액 모드에서는 가입기간과 함께 소득을 역산한다. */
+  function setMode(next){
+    mode=next;
+    const onIncome = mode==='income';
+    modeIncome.classList.toggle('is-on', onIncome);
+    modePaid.classList.toggle('is-on', !onIncome);
+    modeIncome.setAttribute('aria-checked', String(onIncome));
+    modePaid.setAttribute('aria-checked', String(!onIncome));
+    incomeField.hidden = !onIncome;
+    paidField.hidden = onIncome;
+    calculate();
+  }
+  modeIncome.addEventListener('click',()=>setMode('income'));
+  modePaid.addEventListener('click',()=>setMode('paid'));
+
   function calculate(){
-    const B=Math.min(Math.max(+income.value,0),6170000); // 상한 반영
     const yr=+years.value;
     const adj=+age.value;
+
+    // 총 납입금액 모드: 납입총액 = B × 9% × 연수 × 12 를 뒤집어 B를 구한다.
+    let rawB, totalPaid;
+    if(mode==='paid'){
+      totalPaid=Math.max(+paidTotal.value,0);
+      rawB = totalPaid/(RATE*yr*12);
+    }else{
+      rawB = Math.max(+income.value,0);
+      totalPaid = rawB*RATE*yr*12;
+    }
+    const B=Math.min(rawB,INCOME_CAP);       // 상한 반영
+    capNote.hidden = !(mode==='paid' && rawB>INCOME_CAP);
 
     // 기본연금액(연) = 상수 × (A + B) × (1 + 0.05 × 20년초과연수), 20년 미만은 비례 축소
     let multiplier = yr>=20 ? (1+0.05*(yr-20)) : (yr/20);
@@ -474,15 +542,21 @@
 
     let yearly = baseYearly*factor;
     let monthly = yearly/12;
-    let totalPaid = B*RATE*yr*12;
 
     document.getElementById('monthly').innerHTML=won(monthly)+' <small>/ 월</small>';
     document.getElementById('yearly').textContent=won(yearly);
     document.getElementById('base').textContent=won(baseYearly/12)+' / 월';
     document.getElementById('adjust').textContent=adjLabel(adj)+' ('+adjPct+')';
+    // 입력한 쪽은 그대로, 계산해 낸 쪽은 '(역산)'을 붙여 구분한다.
+    document.getElementById('incomeLabel').textContent =
+      mode==='paid' ? '월 평균 소득 (역산)' : '월 평균 소득';
+    document.getElementById('paidLabel').textContent =
+      mode==='paid' ? '총 납부액 (입력값)' : '총 납부 예상액';
+    document.getElementById('incomeOut').textContent=won(rawB)+' / 월';
     document.getElementById('paid').textContent=won(totalPaid);
   }
   document.getElementById('calcBtn').addEventListener('click',calculate);
+  paidTotal.addEventListener('input',calculate);
   // 초기 표시
   yearsOut.textContent=years.value+'년';
   ageOut.textContent=adjLabel(+age.value);
