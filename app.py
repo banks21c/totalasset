@@ -12,6 +12,7 @@
     GET  /insurance                 보험 서브 허브
     GET  /insurance/damage          손해보험
     GET  /insurance/life            생명보험
+    GET  /insurance/whole-life      종신보험
     GET  /insurance/variable        변액보험
     POST /api/consult/              상담신청 접수
     GET  /admin/consults            상담신청 목록 (ADMIN_TOKEN 필요)
@@ -94,6 +95,11 @@ def insurance_damage():
 @app.get("/insurance/life")
 def insurance_life():
     return _serve("insurance/life.html")
+
+
+@app.get("/insurance/whole-life")
+def insurance_whole_life():
+    return _serve("insurance/whole_life.html")
 
 
 @app.get("/insurance/variable")

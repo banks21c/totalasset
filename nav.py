@@ -19,6 +19,16 @@ NAV_ITEMS = [
     ("/insurance", "보험"),
 ]
 
+# 영역 안에서 다시 갈라지는 하위 탭. 해당 영역에 들어왔을 때만 네비 바 아래에 붙는다.
+SUB_TABS = {
+    "/insurance": [
+        ("/insurance/damage", "손해보험"),
+        ("/insurance/life", "생명보험"),
+        ("/insurance/whole-life", "종신보험"),
+        ("/insurance/variable", "변액보험"),
+    ],
+}
+
 _NAV_CSS = """
 <style id="ta-nav-style">
   :root { --ta-nav-h: 52px; }
@@ -48,6 +58,24 @@ _NAV_CSS = """
   .ta-nav .ta-link:hover { opacity: 1; background: rgba(255,255,255,.09); }
   .ta-nav .ta-link[aria-current="page"] {
     opacity: 1; background: rgba(224,122,95,.22); color: #f2a68e; font-weight: 600;
+  }
+
+  /* 하위 탭. 페이지마다 배경색이 달라 색을 물려받지 않고 자체 색을 쓴다. */
+  .ta-tabs {
+    position: sticky; top: var(--ta-nav-h); z-index: 9998;
+    display: flex; gap: 2px; padding: 0 12px;
+    background: #1c231a; border-bottom: 1px solid #3a4536;
+    font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    font-size: 14px; overflow-x: auto;
+  }
+  .ta-tabs::-webkit-scrollbar { display: none; }
+  .ta-tabs a {
+    color: #b7bfae; text-decoration: none; white-space: nowrap;
+    padding: 12px 16px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .ta-tabs a:hover { color: #eef0ea; }
+  .ta-tabs a[aria-current="page"] {
+    color: #e07a5f; border-bottom-color: #e07a5f; font-weight: 700;
   }
 </style>
 """
@@ -80,12 +108,25 @@ def render_nav(current_path):
     )
 
 
+def render_tabs(current_path):
+    """현재 영역에 하위 탭이 있으면 탭 바 HTML을, 없으면 빈 문자열을 반환한다."""
+    for section, tabs in SUB_TABS.items():
+        if not _is_active(section, current_path):
+            continue
+        links = []
+        for path, label in tabs:
+            current = ' aria-current="page"' if _is_active(path, current_path) else ""
+            links.append(f'<a href="{path}"{current}>{label}</a>')
+        return '<div class="ta-tabs">' + "".join(links) + "</div>"
+    return ""
+
+
 def inject(html, current_path):
-    """`html`의 `<body>` 직후에 네비 바를 넣어 반환한다.
+    """`html`의 `<body>` 직후에 네비 바(+하위 탭)를 넣어 반환한다.
 
     `<body>` 태그를 못 찾으면 (조각 HTML 등) 맨 앞에 붙인다.
     """
-    nav = render_nav(current_path)
+    nav = render_nav(current_path) + render_tabs(current_path)
     match = _BODY_OPEN_RE.search(html)
     if not match:
         return nav + html

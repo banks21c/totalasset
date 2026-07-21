@@ -46,6 +46,10 @@ HTML = """<!doctype html>
         <h2>생명보험 &rarr;</h2>
         <p>사람의 생사에 대해 약정한 금액을 정액 지급. 종신 · 정기 · 연금</p>
       </a>
+      <a class="card" href="/insurance/whole-life">
+        <h2>종신보험 &rarr;</h2>
+        <p>기간 제한 없이 사망을 보장. 보험금 확정 · 해지환급금 존재</p>
+      </a>
       <a class="card" href="/insurance/variable">
         <h2>변액보험 &rarr;</h2>
         <p>보험료 일부를 펀드로 운용해 성과에 따라 보험금이 달라지는 상품</p>

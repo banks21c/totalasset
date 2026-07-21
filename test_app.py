@@ -13,6 +13,7 @@ PAGE_ROUTES = [
     "/insurance",
     "/insurance/damage",
     "/insurance/life",
+    "/insurance/whole-life",
     "/insurance/variable",
 ]
 
@@ -64,6 +65,36 @@ check("국민연금에 옛 '/strategy/' 링크가 남아있지 않음", 'href="/
 
 damage = client.get("/insurance/damage").get_data(as_text=True)
 check("손해보험 -> 생명보험 링크", 'href="/insurance/life"' in damage)
+
+print("보험 하위 탭 4개가 보험 영역에서만 뜬다")
+for route in ["/insurance", "/insurance/damage", "/insurance/life",
+              "/insurance/whole-life", "/insurance/variable"]:
+    body = client.get(route).get_data(as_text=True)
+    check(f"{route} 탭 바 있음", 'class="ta-tabs"' in body)
+    for tab_path, tab_label in nav.SUB_TABS["/insurance"]:
+        check(f"{route} 탭 '{tab_label}' 링크", f'href="{tab_path}"' in body)
+
+for route in ["/", "/irp", "/isa", "/national-pension"]:
+    body = client.get(route).get_data(as_text=True)
+    check(f"{route} 에는 보험 탭이 없음", 'class="ta-tabs"' not in body)
+
+print("보험 탭에서 현재 상품이 활성 표시된다")
+for route, expected in [
+    ("/insurance/whole-life", "종신보험"),
+    ("/insurance/damage", "손해보험"),
+    ("/insurance/variable", "변액보험"),
+]:
+    body = client.get(route).get_data(as_text=True)
+    check(f"{route} -> {expected} 탭 활성", f'aria-current="page">{expected}<' in body)
+
+print("종신보험 페이지 내용")
+whole_life = client.get("/insurance/whole-life").get_data(as_text=True)
+for phrase in ["종신보험", "정기보험", "해지환급금", "예정이율", "사업비"]:
+    check(f"'{phrase}' 다룸", phrase in whole_life)
+check(
+    "생명보험 종류 표에서 종신보험으로 들어가는 링크",
+    'href="/insurance/whole-life"' in client.get("/insurance/life").get_data(as_text=True),
+)
 
 print("상담 API 계약")
 check("이름·연락처 없으면 400", client.post("/api/consult/", data={}).status_code == 400)
