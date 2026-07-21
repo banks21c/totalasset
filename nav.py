@@ -25,6 +25,7 @@ SUB_TABS = {
         ("/insurance/damage", "손해보험"),
         ("/insurance/life", "생명보험"),
         ("/insurance/whole-life", "종신보험"),
+        ("/insurance/term-life", "정기보험"),
         ("/insurance/variable", "변액보험"),
     ],
 }

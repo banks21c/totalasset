@@ -14,6 +14,7 @@ PAGE_ROUTES = [
     "/insurance/damage",
     "/insurance/life",
     "/insurance/whole-life",
+    "/insurance/term-life",
     "/insurance/variable",
 ]
 
@@ -68,7 +69,7 @@ check("손해보험 -> 생명보험 링크", 'href="/insurance/life"' in damage)
 
 print("보험 하위 탭 4개가 보험 영역에서만 뜬다")
 for route in ["/insurance", "/insurance/damage", "/insurance/life",
-              "/insurance/whole-life", "/insurance/variable"]:
+              "/insurance/whole-life", "/insurance/term-life", "/insurance/variable"]:
     body = client.get(route).get_data(as_text=True)
     check(f"{route} 탭 바 있음", 'class="ta-tabs"' in body)
     for tab_path, tab_label in nav.SUB_TABS["/insurance"]:
@@ -91,10 +92,18 @@ print("종신보험 페이지 내용")
 whole_life = client.get("/insurance/whole-life").get_data(as_text=True)
 for phrase in ["종신보험", "정기보험", "해지환급금", "예정이율", "사업비"]:
     check(f"'{phrase}' 다룸", phrase in whole_life)
-check(
-    "생명보험 종류 표에서 종신보험으로 들어가는 링크",
-    'href="/insurance/whole-life"' in client.get("/insurance/life").get_data(as_text=True),
-)
+
+print("정기보험 페이지 내용")
+term_life = client.get("/insurance/term-life").get_data(as_text=True)
+for phrase in ["정기보험", "갱신형", "비갱신형", "만기", "순수보장형", "보장기간"]:
+    check(f"'{phrase}' 다룸", phrase in term_life)
+
+print("생명보험 종류 표와 종신/정기 페이지가 서로 연결된다")
+life = client.get("/insurance/life").get_data(as_text=True)
+check("생명보험 표 -> 종신보험", 'href="/insurance/whole-life"' in life)
+check("생명보험 표 -> 정기보험", 'href="/insurance/term-life"' in life)
+check("종신보험 -> 정기보험", 'href="/insurance/term-life"' in whole_life)
+check("정기보험 -> 종신보험", 'href="/insurance/whole-life"' in term_life)
 
 print("상담 API 계약")
 check("이름·연락처 없으면 400", client.post("/api/consult/", data={}).status_code == 400)
