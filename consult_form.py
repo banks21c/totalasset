@@ -24,17 +24,20 @@ INTERESTS = [
 
 _CSS = """
 <style id="ta-consult-style">
-  .ta-consult { --ta-label-w: 132px; max-width: 720px; }
+  .ta-consult { --ta-label-w: 84px; max-width: 860px; }
+  /* 한 줄에 두 필드씩: 라벨·입력칸·라벨·입력칸 4칼럼. */
   .ta-consult .ta-row {
-    display: grid; grid-template-columns: var(--ta-label-w) 1fr;
-    align-items: center; gap: 12px 16px; margin-bottom: 14px;
+    display: grid;
+    grid-template-columns: var(--ta-label-w) 1fr var(--ta-label-w) 1fr;
+    align-items: center; gap: 12px 14px; margin-bottom: 14px;
   }
-  /* 문의사항은 여러 줄이라 라벨을 위쪽에 맞춘다. */
-  .ta-consult .ta-row.ta-row-top { align-items: start; }
+  /* 문의사항은 라벨 + 입력칸이 남은 폭을 다 쓴다. */
+  .ta-consult .ta-row-wide { grid-template-columns: var(--ta-label-w) 1fr; }
+  .ta-consult .ta-row-wide { align-items: start; }
   .ta-consult label {
     font-size: 14px; font-weight: 700; text-align: right; line-height: 1.4;
   }
-  .ta-consult .ta-req { color: #c2410c; margin-left: 2px; }
+  .ta-consult .ta-req { color: var(--accent, #a13d2e); margin-left: 2px; }
   .ta-consult input, .ta-consult select, .ta-consult textarea {
     width: 100%; padding: 10px 12px; font: inherit; font-size: 14px;
     color: inherit; background: transparent;
@@ -43,21 +46,32 @@ _CSS = """
   }
   .ta-consult textarea { resize: vertical; min-height: 76px; }
   .ta-consult .ta-actions {
-    display: grid; grid-template-columns: var(--ta-label-w) 1fr; gap: 16px;
+    display: grid; grid-template-columns: var(--ta-label-w) 1fr; gap: 14px;
   }
+  /* 버튼 색은 페이지가 정의한 --accent / --accent-ink를 그대로 쓴다.
+     폼이 들어가는 세 페이지 모두 이 두 변수를 갖고 있고, 값이 없을 때를
+     대비해 폴백을 둔다. */
   .ta-consult .ta-submit {
     grid-column: 2; padding: 12px 24px; font: inherit; font-weight: 700;
-    border: none; border-radius: 7px; cursor: pointer;
-    background: currentColor; border: 1px solid currentColor;
+    border-radius: 7px; cursor: pointer;
+    background: var(--accent, #a13d2e);
+    color: var(--accent-ink, #ffffff);
+    border: 1px solid var(--accent, #a13d2e);
   }
-  .ta-consult .ta-submit span { filter: invert(1) grayscale(1) contrast(9); }
+  .ta-consult .ta-submit:hover { opacity: .9; }
   .ta-consult .ta-submit[disabled] { opacity: .55; cursor: default; }
   .ta-consult .ta-msg {
     display: none; grid-column: 2; margin-top: 12px; padding: 12px 14px;
     border: 1px solid currentColor; border-radius: 7px; font-size: 14px;
   }
-  @media (max-width: 620px) {
-    .ta-consult .ta-row, .ta-consult .ta-actions { grid-template-columns: 1fr; }
+  /* 두 필드를 나란히 두기 좁아지면 한 필드씩 한 줄로 내린다. */
+  @media (max-width: 760px) {
+    .ta-consult .ta-row { grid-template-columns: var(--ta-label-w) 1fr; }
+  }
+  /* 더 좁아지면 라벨도 입력칸 위로 올린다. */
+  @media (max-width: 480px) {
+    .ta-consult .ta-row, .ta-consult .ta-row-wide,
+    .ta-consult .ta-actions { grid-template-columns: 1fr; }
     .ta-consult label { text-align: left; }
     .ta-consult .ta-submit, .ta-consult .ta-msg { grid-column: 1; }
   }
@@ -78,9 +92,8 @@ _SCRIPT = """
       ok.style.display = 'none';
       err.style.display = 'none';
       btn.disabled = true;
-      var label = btn.querySelector('span');
-      var original = label.textContent;
-      label.textContent = '전송 중...';
+      var original = btn.textContent;
+      btn.textContent = '전송 중...';
 
       fetch('/api/consult/', {
         method: 'POST',
@@ -104,7 +117,7 @@ _SCRIPT = """
         })
         .finally(function () {
           btn.disabled = false;
-          label.textContent = original;
+          btn.textContent = original;
         });
     });
   })();
@@ -126,23 +139,22 @@ def render(product, default_interest=""):
         _CSS
         + '<form class="ta-consult" id="taConsultForm">'
         + f'<input type="hidden" name="product" value="{product}">'
+        # 1행: 이름 · 연락처
         + '<div class="ta-row">'
         '<label for="taName">이름<span class="ta-req">*</span></label>'
         '<input id="taName" name="name" type="text" required placeholder="홍길동">'
-        "</div>"
-        '<div class="ta-row">'
         '<label for="taPhone">연락처<span class="ta-req">*</span></label>'
         '<input id="taPhone" name="phone" type="tel" required placeholder="010-1234-5678">'
         "</div>"
+        # 2행: 이메일 · 관심 분야
         '<div class="ta-row">'
         '<label for="taEmail">이메일</label>'
         '<input id="taEmail" name="email" type="email" placeholder="you@example.com">'
-        "</div>"
-        '<div class="ta-row">'
         '<label for="taInterest">관심 분야</label>'
         '<select id="taInterest" name="interest">' + "".join(options) + "</select>"
         "</div>"
-        '<div class="ta-row ta-row-top">'
+        # 3행: 문의사항 (한 줄 전체)
+        '<div class="ta-row ta-row-wide">'
         '<label for="taMessage">문의사항</label>'
         '<textarea id="taMessage" name="message" rows="3" '
         'placeholder="궁금한 점을 자유롭게 남겨주세요."></textarea>'
@@ -152,7 +164,7 @@ def render(product, default_interest=""):
         'aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">'
         '<div class="ta-actions">'
         '<button type="submit" class="ta-submit" id="taConsultSubmit">'
-        "<span>상담 신청하기</span></button>"
+        "상담 신청하기</button>"
         '<div class="ta-msg" id="taConsultOk">'
         "신청이 접수되었습니다. 담당자가 남겨주신 연락처로 안내드립니다.</div>"
         '<div class="ta-msg" id="taConsultErr">'

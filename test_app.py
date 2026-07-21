@@ -160,10 +160,28 @@ for route in ["/", "/irp", "/national-pension", "/insurance/life"]:
         continue
     check(f"{route} 폼 없음", 'id="taConsultForm"' not in body)
 
-print("라벨과 입력칸이 한 줄에 배치된다")
+print("제출 버튼이 페이지 accent 변수를 쓴다")
+for route in FORM_PAGES:
+    body = client.get(route).get_data(as_text=True)
+    check(f"{route} 버튼 배경 var(--accent)", "background: var(--accent, #a13d2e)" in body)
+    check(f"{route} 버튼 글자 var(--accent-ink)", "color: var(--accent-ink, #ffffff)" in body)
+    check(f"{route} invert 필터 제거됨", "filter: invert" not in body)
+    check(f"{route} 페이지가 --accent-ink를 정의함", "--accent-ink:" in body)
+
+print("한 줄에 두 필드씩 배치된다")
 form_page = client.get("/irp").get_data(as_text=True)
-check("행이 2칼럼 그리드", "grid-template-columns: var(--ta-label-w) 1fr" in form_page)
-check("좁은 화면에서는 1칼럼으로 접힘", "grid-template-columns: 1fr;" in form_page)
+check(
+    "행이 4칼럼 그리드(라벨·입력·라벨·입력)",
+    "grid-template-columns: var(--ta-label-w) 1fr var(--ta-label-w) 1fr" in form_page,
+)
+check("문의사항 행은 2칼럼", ".ta-row-wide { grid-template-columns: var(--ta-label-w) 1fr; }" in form_page)
+check("좁은 화면에서 한 필드씩 내려감", "@media (max-width: 760px)" in form_page)
+check("더 좁으면 라벨도 위로", "@media (max-width: 480px)" in form_page)
+
+# 이름·연락처가 같은 .ta-row 안에, 이메일·관심분야가 같은 .ta-row 안에 있어야 한다
+rows = form_page.split('<div class="ta-row')
+check("이름과 연락처가 한 행", any('name="name"' in r and 'name="phone"' in r for r in rows))
+check("이메일과 관심분야가 한 행", any('name="email"' in r and 'name="interest"' in r for r in rows))
 
 print("출처·관심분야가 실제로 저장된다")
 saved = client.post("/api/consult/", data={
