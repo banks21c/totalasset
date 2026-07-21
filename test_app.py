@@ -90,6 +90,16 @@ check("탭 링크가 .ta-inner 안에 있음",
 check("보험 허브 본문 폭이 다른 보험 페이지와 같음",
       "max-width:960px" in client.get("/insurance").get_data(as_text=True))
 
+print("국민연금 페이지가 사이트 공통 스타일을 따른다")
+for route in ["/national-pension", "/national-pension/strategy"]:
+    body = client.get(route).get_data(as_text=True)
+    for old in ["00539f", "003c73", "00a651"]:
+        check(f"{route} 옛 국민연금 블루({old}) 없음", old not in body)
+    check(f"{route} Pretendard 사용", "Pretendard" in body)
+    check(f"{route} 본문 폭 960px", "max-width:960px" in body)
+    check(f"{route} 다크모드 지원", "prefers-color-scheme" in body)
+    check(f"{route} 공통 accent 사용", "#a13d2e" in body)
+
 print("보험 탭 순서")
 check(
     "생명보험이 손해보험보다 앞",

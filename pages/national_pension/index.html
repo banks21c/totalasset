@@ -5,34 +5,64 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>국민연금 안내 | 가입부터 수령까지</title>
 <style>
+  /* 이 페이지 고유의 변수명(--brand, --bg …)은 그대로 두고 값만 NextFinUp
+     팔레트에 매핑한다. 마크업을 건드리지 않고 분위기만 통일하기 위해서다. */
   :root{
-    --brand:#00539f;      /* 국민연금 블루 */
-    --brand-dark:#003c73;
-    --accent:#00a651;     /* 그린 포인트 */
-    --bg:#f4f7fb;
-    --card:#ffffff;
-    --text:#1f2d3d;
-    --muted:#5a6b7b;
-    --border:#e2e8f0;
-    --shadow:0 6px 20px rgba(0,60,115,.08);
+    --brand:#a13d2e;      /* 사이트 공통 accent */
+    --brand-dark:#7d2e22;
+    --accent:#2f7a4d;     /* 그린 포인트 — 공통 success */
+    --bg:#f1ede1;
+    --card:#fffcf5;
+    --card-stub:#e8e2ce;
+    --text:#1f2e28;
+    --muted:#536056;
+    --border:#d8d0ba;
+    --on-brand:#ffffff;   /* brand 배경 위의 글자색 */
+    --note-bg:#f6efdc;
+    --note-line:#d8c79a;
+    --shadow:0 1px 2px rgba(31,46,40,.06), 0 8px 24px rgba(31,46,40,.08);
     --radius:14px;
   }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --brand:#e07a5f; --brand-dark:#c25f45; --accent:#7fd19f;
+      --bg:#12160f; --card:#1c231a; --card-stub:#262f22;
+      --text:#eef0ea; --muted:#b7bfae; --border:#3a4536;
+      --on-brand:#1f2e28; --note-bg:#2a2418; --note-line:#5a4d2e;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --brand:#e07a5f; --brand-dark:#c25f45; --accent:#7fd19f;
+    --bg:#12160f; --card:#1c231a; --card-stub:#262f22;
+    --text:#eef0ea; --muted:#b7bfae; --border:#3a4536;
+    --on-brand:#1f2e28; --note-bg:#2a2418; --note-line:#5a4d2e;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.4);
+  }
+  :root[data-theme="light"]{
+    --brand:#a13d2e; --brand-dark:#7d2e22; --accent:#2f7a4d;
+    --bg:#f1ede1; --card:#fffcf5; --card-stub:#e8e2ce;
+    --text:#1f2e28; --muted:#536056; --border:#d8d0ba;
+    --on-brand:#ffffff; --note-bg:#f6efdc; --note-line:#d8c79a;
+    --shadow:0 1px 2px rgba(31,46,40,.06), 0 8px 24px rgba(31,46,40,.08);
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;color-scheme:light dark}
   body{
-    font-family:"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+    font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
     color:var(--text);background:var(--bg);line-height:1.65;
+    -webkit-font-smoothing:antialiased;
   }
   a{color:inherit;text-decoration:none}
 
   /* ── 헤더/네비 ── */
   header{
     position:sticky;top:0;z-index:50;
-    background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+    background:color-mix(in srgb, var(--bg) 92%, transparent);backdrop-filter:blur(8px);
     border-bottom:1px solid var(--border);
   }
   .nav{
-    max-width:1080px;margin:0 auto;padding:14px 20px;
+    max-width:960px;margin:0 auto;padding:14px 24px;
     display:flex;align-items:center;justify-content:space-between;gap:16px;
   }
   .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;color:var(--brand)}
@@ -46,19 +76,19 @@
   /* ── 히어로 ── */
   .hero{
     background:linear-gradient(135deg,var(--brand),var(--brand-dark));
-    color:#fff;padding:72px 20px 80px;text-align:center;
+    color:var(--on-brand);padding:72px 24px 80px;text-align:center;
   }
   .hero h1{font-size:2.4rem;font-weight:800;letter-spacing:-1px;margin-bottom:14px}
   .hero p{font-size:1.1rem;opacity:.92;max-width:620px;margin:0 auto 28px}
   .hero .cta{
-    display:inline-block;background:#fff;color:var(--brand);
+    display:inline-block;background:var(--card);color:var(--brand);
     padding:14px 30px;border-radius:30px;font-weight:800;box-shadow:var(--shadow);
     transition:transform .15s;
   }
   .hero .cta:hover{transform:translateY(-2px)}
 
   /* ── 레이아웃 ── */
-  main{max-width:1080px;margin:0 auto;padding:0 20px}
+  main{max-width:960px;margin:0 auto;padding:0 24px}
   section{padding:64px 0;border-bottom:1px solid var(--border)}
   section:last-child{border-bottom:none}
   .sec-head{text-align:center;margin-bottom:40px}
@@ -96,27 +126,27 @@
   .range-wrap input[type=range]{flex:1;accent-color:var(--brand)}
   .range-wrap output{min-width:70px;font-weight:800;color:var(--brand);text-align:right}
   .btn{
-    width:100%;padding:14px;background:var(--brand);color:#fff;border:none;border-radius:10px;
+    width:100%;padding:14px;background:var(--brand);color:var(--on-brand);border:none;border-radius:10px;
     font-size:1.05rem;font-weight:800;cursor:pointer;transition:background .15s;
   }
   .btn:hover{background:var(--brand-dark)}
 
-  .calc-result{background:linear-gradient(160deg,#f0f7ff,#ffffff)}
+  .calc-result{background:var(--card)}
   .result-amount{font-size:2.4rem;font-weight:800;color:var(--brand);margin:6px 0 2px}
   .result-amount small{font-size:1rem;color:var(--muted);font-weight:600}
   .result-sub{color:var(--muted);margin-bottom:20px}
   .result-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--border);font-size:.95rem}
   .result-row span:last-child{font-weight:700}
-  .disclaimer{margin-top:18px;font-size:.82rem;color:var(--muted);background:#fff8e6;
-    border:1px solid #ffe4a3;border-radius:10px;padding:12px 14px}
+  .disclaimer{margin-top:18px;font-size:.82rem;color:var(--muted);background:var(--note-bg);
+    border:1px solid var(--note-line);border-radius:10px;padding:12px 14px}
 
   /* ── 수령 나이 표 ── */
   .table-wrap{overflow-x:auto;border-radius:var(--radius);box-shadow:var(--shadow)}
   table{width:100%;border-collapse:collapse;background:var(--card);min-width:420px}
   th,td{padding:14px 16px;text-align:center;border-bottom:1px solid var(--border)}
-  thead th{background:var(--brand);color:#fff;font-weight:700}
+  thead th{background:var(--brand);color:var(--on-brand);font-weight:700}
   tbody tr:hover{background:var(--bg)}
-  tbody tr.hl{background:#e8f5ec;font-weight:700}
+  tbody tr.hl{background:var(--card-stub);font-weight:700}
   .pill-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:24px}
   .pill{flex:1;min-width:240px;background:var(--card);border:1px solid var(--border);
     border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
@@ -138,22 +168,22 @@
   .faq .answer{padding:0 22px 20px;color:var(--muted)}
   .faq .more{margin-top:12px}
   .faq .more a{
-    display:inline-block;background:var(--brand);color:#fff;
+    display:inline-block;background:var(--brand);color:var(--on-brand);
     padding:9px 18px;border-radius:20px;font-size:.9rem;font-weight:700;
     transition:background .15s;
   }
   .faq .more a:hover{background:var(--brand-dark)}
 
   /* ── 푸터 ── */
-  footer{background:var(--brand-dark);color:#cfe0f0;padding:40px 20px;text-align:center;font-size:.9rem}
-  footer a{color:#fff;font-weight:700;text-decoration:underline}
+  footer{background:var(--card-stub);color:var(--muted);padding:40px 24px;text-align:center;font-size:.9rem;border-top:1px solid var(--border)}
+  footer a{color:var(--brand);font-weight:700;text-decoration:underline}
   footer .official{margin-top:10px;font-size:.82rem;opacity:.8}
 
   @media(max-width:760px){
     .hero h1{font-size:1.8rem}
     .calc{grid-template-columns:1fr}
-    .nav ul{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;
-      flex-direction:column;padding:10px 20px;border-bottom:1px solid var(--border)}
+    .nav ul{display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);
+      flex-direction:column;padding:10px 24px;border-bottom:1px solid var(--border)}
     .nav ul.open{display:flex}
     .menu-btn{display:block}
   }
