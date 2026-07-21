@@ -16,7 +16,8 @@ HTML = """<!doctype html>
   * { box-sizing: border-box; }
   body { margin:0; background:var(--paper); color:var(--ink); line-height:1.6;
          font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif; }
-  .wrap { max-width:900px; margin:0 auto; padding:48px 20px; }
+  /* 폭·좌우 여백은 다른 보험 페이지(960/24)와 맞춰야 상단 탭과 정렬된다. */
+  .wrap { max-width:960px; margin:0 auto; padding:48px 24px; }
   h1 { font-size:28px; margin:0 0 8px; }
   p.lead { color:var(--ink); opacity:.75; margin:0 0 32px; }
   .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }

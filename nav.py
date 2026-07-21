@@ -32,20 +32,29 @@ SUB_TABS = {
 
 _NAV_CSS = """
 <style id="ta-nav-style">
-  :root { --ta-nav-h: 52px; }
+  /* 본문 칼럼과 같은 폭·여백. 네비와 탭이 본문 왼쪽 끝에 맞춰 선다. */
+  :root { --ta-nav-h: 52px; --ta-col: 960px; --ta-col-pad: 24px; }
+  /* 링크마다 자체 좌우 패딩이 있어, 글자가 본문 왼쪽 끝에 서려면 그만큼 빼줘야 한다.
+     --ta-item-pad는 각 바가 자기 링크 패딩 값을 넣는다. */
+  .ta-inner {
+    width: 100%; max-width: var(--ta-col); margin: 0 auto;
+    padding: 0 calc(var(--ta-col-pad) - var(--ta-item-pad, 0px));
+    display: flex; align-items: center;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .ta-inner::-webkit-scrollbar { display: none; }
   /* 페이지 자체의 sticky 헤더(예: 국민연금)가 네비 바 아래로 붙도록 밀어준다.
      `top`은 positioned 요소에만 적용되므로 static 헤더에는 아무 영향이 없다. */
   body > header, body > .header { top: var(--ta-nav-h) !important; }
   .ta-nav {
     position: sticky; top: 0; z-index: 10000;
-    display: flex; align-items: center; gap: 4px;
-    height: var(--ta-nav-h); padding: 0 16px;
+    display: flex; align-items: center;
+    height: var(--ta-nav-h);
     background: #12160f; color: #eef0ea;
     font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
     font-size: 14px; line-height: 1;
-    overflow-x: auto; -webkit-overflow-scrolling: touch;
   }
-  .ta-nav::-webkit-scrollbar { display: none; }
+  .ta-nav .ta-inner { --ta-item-pad: 4px; gap: 4px; }
   .ta-nav a { color: inherit; text-decoration: none; white-space: nowrap; }
   .ta-nav .ta-brand {
     font-weight: 700; margin-right: 12px; padding: 8px 4px;
@@ -64,12 +73,12 @@ _NAV_CSS = """
   /* 하위 탭. 페이지마다 배경색이 달라 색을 물려받지 않고 자체 색을 쓴다. */
   .ta-tabs {
     position: sticky; top: var(--ta-nav-h); z-index: 9998;
-    display: flex; gap: 2px; padding: 0 12px;
+    display: flex;
     background: #1c231a; border-bottom: 1px solid #3a4536;
     font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
-    font-size: 14px; overflow-x: auto;
+    font-size: 14px;
   }
-  .ta-tabs::-webkit-scrollbar { display: none; }
+  .ta-tabs .ta-inner { --ta-item-pad: 16px; align-items: stretch; }
   .ta-tabs a {
     color: #b7bfae; text-decoration: none; white-space: nowrap;
     padding: 12px 16px; border-bottom: 2px solid transparent; margin-bottom: -1px;
@@ -102,10 +111,10 @@ def render_nav(current_path):
         links.append(f'<a class="ta-link" href="{path}"{current}>{label}</a>')
     return (
         _NAV_CSS
-        + '<nav class="ta-nav">'
+        + '<nav class="ta-nav"><div class="ta-inner">'
         + f'<a class="ta-brand" href="/"><span class="ta-dot"></span>{BRAND}</a>'
         + "".join(links)
-        + "</nav>"
+        + "</div></nav>"
     )
 
 
@@ -118,7 +127,11 @@ def render_tabs(current_path):
         for path, label in tabs:
             current = ' aria-current="page"' if _is_active(path, current_path) else ""
             links.append(f'<a href="{path}"{current}>{label}</a>')
-        return '<div class="ta-tabs">' + "".join(links) + "</div>"
+        return (
+            '<div class="ta-tabs"><div class="ta-inner">'
+            + "".join(links)
+            + "</div></div>"
+        )
     return ""
 
 

@@ -79,6 +79,17 @@ for route in ["/", "/irp", "/isa", "/national-pension"]:
     body = client.get(route).get_data(as_text=True)
     check(f"{route} 에는 보험 탭이 없음", 'class="ta-tabs"' not in body)
 
+print("네비·탭이 본문 칼럼에 정렬된다")
+for route in ["/", "/insurance", "/insurance/life", "/irp"]:
+    body = client.get(route).get_data(as_text=True)
+    check(f"{route} 네비 링크가 .ta-inner 안에 있음",
+          '<nav class="ta-nav"><div class="ta-inner">' in body)
+tabs_page = client.get("/insurance/life").get_data(as_text=True)
+check("탭 링크가 .ta-inner 안에 있음",
+      '<div class="ta-tabs"><div class="ta-inner">' in tabs_page)
+check("보험 허브 본문 폭이 다른 보험 페이지와 같음",
+      "max-width:960px" in client.get("/insurance").get_data(as_text=True))
+
 print("보험 탭 순서")
 check(
     "생명보험이 손해보험보다 앞",
