@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>연금저축 안내 · 상담신청</title>
+<style>
+  :root {
+    --ink: #1f2e28; --ink-soft: #536056; --paper: #f1ede1; --card: #fffcf5; --card-stub: #e8e2ce;
+    --line: #d8d0ba; --line-strong: #b9b096; --accent: #a13d2e; --accent-ink: #ffffff;
+    --success: #2f7a4d; --success-bg: #e6f4ea;
+    --shadow: 0 1px 2px rgba(31,46,40,0.06), 0 8px 24px rgba(31,46,40,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #eef0ea; --ink-soft: #b7bfae; --paper: #12160f; --card: #1c231a; --card-stub: #262f22;
+      --line: #3a4536; --line-strong: #4d5a48; --accent: #e07a5f; --accent-ink: #1f2e28;
+      --success: #7fd19f; --success-bg: #163524;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.4);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    line-height: 1.65; -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', 'Consolas', 'Menlo', monospace; font-variant-numeric: tabular-nums; }
+  a { color: inherit; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  header { padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .brand-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: baseline; gap: 8px; }
+  .brand-mark { font-weight: 800; font-size: 18px; letter-spacing: -0.02em; }
+  .brand-sub { font-size: 12.5px; color: var(--ink-soft); }
+  .demo-chip {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 3px 8px;
+  }
+
+  /* hero */
+  .hero { padding: 44px 0 8px; }
+  .passbook {
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow);
+    display: grid; grid-template-columns: 1fr 220px; overflow: hidden;
+  }
+  .passbook-main { padding: 40px 40px 34px; }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-soft); margin-bottom: 14px;
+  }
+  .hero-title { font-size: 30px; font-weight: 800; letter-spacing: -0.01em; max-width: 24ch; }
+  .hero-desc { margin: 14px 0 24px; color: var(--ink-soft); font-size: 15px; max-width: 52ch; }
+  .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .passbook-cover {
+    background: var(--card-stub); border-left: 1px solid var(--line); padding: 28px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  }
+  .seal {
+    width: 104px; height: 104px; border-radius: 50%; border: 3px double var(--accent); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-weight: 800; font-size: 13px; line-height: 1.35; transform: rotate(-8deg);
+  }
+  .cover-label { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); text-align: center; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--accent);
+    border-radius: 7px; font-weight: 700; font-size: 14px; cursor: pointer; padding: 12px 20px;
+    background: var(--accent); color: var(--accent-ink); transition: transform 0.15s ease, box-shadow 0.15s ease;
+    font-family: inherit;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(161,61,46,0.28); }
+  .btn:active { transform: translateY(0); }
+  .btn-ghost { background: transparent; color: var(--accent); }
+  .btn-block { width: 100%; }
+
+  section { padding: 44px 0; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+  .section-title { font-size: 22px; font-weight: 800; }
+  .section-note { font-size: 13px; color: var(--ink-soft); }
+  .num { font-family: 'JetBrains Mono', monospace; color: var(--accent); margin-right: 8px; }
+
+  /* who-cards */
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 8px; box-shadow: var(--shadow); padding: 22px 20px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .card-tag { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+  .card-title { font-size: 16px; font-weight: 800; }
+  .card-body { font-size: 13.5px; color: var(--ink-soft); }
+  .card-body strong { color: var(--ink); }
+
+  /* table */
+  .ledger-table {
+    width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line);
+    border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); font-size: 14px;
+  }
+  .ledger-table th, .ledger-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); }
+  .ledger-table thead th {
+    background: var(--card-stub); font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700;
+  }
+  .ledger-table tbody tr:last-child td { border-bottom: none; }
+  .ledger-table .hl { font-weight: 800; color: var(--accent); }
+
+  /* callout */
+  .callout {
+    background: var(--success-bg); border: 1px solid var(--line); border-left: 3px solid var(--success);
+    border-radius: 8px; padding: 20px 22px; font-size: 14px;
+  }
+  .callout-title { font-weight: 800; color: var(--success); margin-bottom: 8px; }
+  .callout strong { color: var(--ink); }
+
+  /* consult form */
+  .consult { background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 36px 40px; }
+  .consult-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .consult-grid .full { grid-column: 1 / -1; }
+  .consult-grid label { display: block; font-size: 13px; font-weight: 700; color: var(--ink-soft); margin-bottom: 6px; }
+  .consult-grid input, .consult-grid select, .consult-grid textarea {
+    width: 100%; background: var(--paper); border: 1px solid var(--line-strong); border-radius: 7px;
+    padding: 11px 13px; font-size: 14px; color: var(--ink); font-family: inherit;
+  }
+  .consult-grid input:focus, .consult-grid select:focus, .consult-grid textarea:focus { border-color: var(--accent); }
+  .consult .btn-block { margin-top: 20px; }
+  .msg { display: none; margin-top: 14px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+  .msg.ok { background: var(--success-bg); color: var(--success); }
+  .msg.err { background: rgba(161,61,46,0.12); color: var(--accent); }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; }
+  .footer-brand { font-weight: 800; font-size: 14px; margin-bottom: 8px; }
+  .footer-note { font-size: 12px; color: var(--ink-soft); max-width: 64ch; line-height: 1.7; }
+
+  @media (max-width: 760px) {
+    .passbook { grid-template-columns: 1fr; }
+    .passbook-cover { border-left: none; border-top: 1px solid var(--line); flex-direction: row; }
+    .passbook-main { padding: 30px 24px; }
+    .cards { grid-template-columns: 1fr; }
+    .consult { padding: 26px 20px; }
+    .consult-grid { grid-template-columns: 1fr; }
+    .ledger-table { display: block; overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wrap brand-row">
+      <div class="brand">
+        <span class="brand-mark">연금저축 안내소</span>
+        <span class="brand-sub">노후준비 · 절세 · 상담신청</span>
+      </div>
+      <span class="demo-chip">연금저축 가이드</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="passbook">
+        <div class="passbook-main">
+          <div class="eyebrow">노후 준비와 연말정산 절세를 한 번에</div>
+          <h1 class="hero-title">연금저축, 나에게 유리할까?<br>핵심만 짚어드립니다</h1>
+          <p class="hero-desc">
+            연금저축은 노후 준비와 연말정산(또는 종합소득세 신고) 절세를 동시에 챙길 수 있는 대표적인 금융상품입니다.
+            어떤 사람에게 가장 유리한지, 그리고 어떻게 투자해야 하는지 아래에서 확인하고 전문가 상담을 신청하세요.
+          </p>
+          <div class="hero-cta">
+            <button class="btn" onclick="document.getElementById('who').scrollIntoView({behavior:'smooth'})">내용 살펴보기</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('consult').scrollIntoView({behavior:'smooth'})">상담 신청하기</button>
+          </div>
+        </div>
+        <div class="passbook-cover">
+          <div class="seal">세액공제<br>최대 16.5%</div>
+          <div class="cover-label">Tax-Deferred</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="section-title"><span class="num">01</span>연금저축, 어떤 사람에게 유리할까?</h2>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div class="card-tag">Type ①</div>
+          <div class="card-title">토해내는 세금이 많은 직장인·개인사업자</div>
+          <div class="card-body">
+            연금저축의 가장 큰 무기는 <strong>세액공제</strong>입니다. 연간 납입액 중 최대 <strong>600만 원</strong>까지
+            공제 혜택을 줍니다(IRP와 합산 시 최대 900만 원). 세금을 많이 내는 사람일수록 매년 확실한 세테크 효과를 봅니다.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-tag">Type ②</div>
+          <div class="card-title">해외 주식·ETF 투자를 선호하는 사람</div>
+          <div class="card-body">
+            일반 계좌에서 해외 ETF에 투자하면 매번 <strong>배당소득세(15.4%)</strong>를 떼입니다. 연금저축 계좌 안에서는
+            수익이 나도 당장 세금을 내지 않고 그대로 <strong>재투자(과세이연)</strong>할 수 있어 장기 투자자에게 매우 유리합니다.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-tag">Type ③</div>
+          <div class="card-title">여유 자금을 5년 이상 묶어둘 수 있는 사람</div>
+          <div class="card-body">
+            연금저축은 <strong>최소 5년 이상 납입</strong>하고 <strong>만 55세 이후</strong> 연금으로 수령해야 합니다.
+            중간에 해지하면 받은 세액공제를 토해내고 <strong>16.5% 기타소득세</strong>가 부과되니, 단기 자금이 필요하면 오히려 독이 될 수 있습니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-head" style="margin-top:32px; margin-bottom:14px;">
+        <h3 class="section-title" style="font-size:16px;">소득 구간별 세액공제 — 600만 원을 채웠을 때</h3>
+      </div>
+      <table class="ledger-table">
+        <thead>
+          <tr><th>총급여(종합소득)</th><th>공제율</th><th>600만 원 납입 시 환급액</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>5,500만 원 이하 (종합소득 4,500만 원 이하)</td>
+            <td class="hl">16.5%</td>
+            <td>약 <strong>99만 원</strong> 환급</td>
+          </tr>
+          <tr>
+            <td>5,500만 원 초과 (종합소득 4,500만 원 초과)</td>
+            <td class="hl">13.2%</td>
+            <td>약 <strong>79.2만 원</strong> 환급</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="invest" style="padding-top:0;">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="section-title"><span class="num">02</span>연금저축 현명하게 투자하는 방법</h2>
+        <span class="section-note">증권사 연금저축펀드에서 ETF 매매가 효율적</span>
+      </div>
+      <p class="hero-desc" style="max-width:70ch; margin-top:0;">
+        과거에는 은행 연금저축신탁이나 보험사 연금저축보험(공시이율형)을 많이 가입했지만, 낮은 수익률 때문에 최근에는
+        증권사 <strong>연금저축펀드</strong>로 적극 운용하는 추세입니다. 대표적인 3가지 전략을 소개합니다.
+      </p>
+      <div class="cards">
+        <div class="card">
+          <div class="card-tag">전략 ① 장기 성장형</div>
+          <div class="card-title">미국 시장 지수 추종 ETF</div>
+          <div class="card-body">
+            장기 우상향 가능성이 높은 미국 시장에 묻어두는 전략. <strong>S&amp;P500, 나스닥100</strong> 등을 추종하는 국내 상장 해외 ETF가 대표적.
+            연금계좌에서는 수령 시 <strong>3.3%~5.5%</strong>의 낮은 연금소득세만 내면 되어 궁합이 최적입니다.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-tag">전략 ② 자동형</div>
+          <div class="card-title">TDF (Target Date Fund)</div>
+          <div class="card-body">
+            비중 조절이 어려운 분께 적합. 은퇴 예상 시점(예: <strong>TDF 2050</strong>)을 고르면 초기엔 위험자산 비중을 높였다가,
+            은퇴가 가까워질수록 채권 등 안전자산 비중을 알아서 늘려줍니다.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-tag">전략 ③ 안정형</div>
+          <div class="card-title">글로벌 자산배분</div>
+          <div class="card-body">
+            폭락장에서도 자산을 지키고 싶다면 주식·채권·리츠를 쪼개 담는 전략. 예를 들어
+            <strong>미국 주식 50% / 미국 채권 40% / 금·리츠 10%</strong> 형태로 변동성을 낮춥니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0;">
+    <div class="wrap">
+      <div class="callout">
+        <div class="callout-title">📌 마지막 꿀팁 — 수령 시 주의사항</div>
+        은퇴 후 연금을 받을 때 연간 사적연금(연금저축+IRP) 수령액이 <strong>1,500만 원</strong>을 넘으면 종합과세되거나
+        16.5% 분리과세를 선택해야 합니다. 매달 <strong>약 120만 원 안팎</strong>으로 나누어 수령하도록 정해두는 것이 세금을 아끼는 지름길입니다.
+      </div>
+    </div>
+  </section>
+
+  <section id="consult">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 class="section-title"><span class="num">03</span>전문가 상담 신청</h2>
+        <span class="section-note">남겨주신 연락처로 담당자가 안내드립니다</span>
+      </div>
+
+      <form class="consult" onsubmit="return submitConsult(event)">
+        <div class="consult-grid">
+          <div>
+            <label for="name">이름 *</label>
+            <input id="name" name="name" type="text" required placeholder="홍길동">
+          </div>
+          <div>
+            <label for="phone">연락처 *</label>
+            <input id="phone" name="phone" type="tel" required placeholder="010-1234-5678">
+          </div>
+          <div>
+            <label for="email">이메일</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com">
+          </div>
+          <div>
+            <label for="salary">총급여 구간</label>
+            <select id="salary" name="salary">
+              <option value="">선택 안 함</option>
+              <option>5,500만원 이하</option>
+              <option>5,500만원 초과</option>
+            </select>
+          </div>
+          <div>
+            <label for="amount">연 납입 예정액</label>
+            <input id="amount" name="amount" type="text" placeholder="예: 600만원">
+          </div>
+          <div>
+            <label for="strategy">관심 투자전략</label>
+            <select id="strategy" name="strategy">
+              <option value="">선택 안 함</option>
+              <option>미국 시장 지수 ETF (장기 성장형)</option>
+              <option>TDF (자동형)</option>
+              <option>글로벌 자산배분 (안정형)</option>
+              <option>아직 잘 모르겠음 · 추천 필요</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="message">문의사항</label>
+            <textarea id="message" name="message" rows="3" placeholder="궁금한 점을 자유롭게 남겨주세요."></textarea>
+          </div>
+        </div>
+        <!-- 허니팟: 사람 눈에 보이지 않는 봇 차단 필드 -->
+        <input type="text" id="website" name="website" autocomplete="off" tabindex="-1"
+               style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" aria-hidden="true">
+        <button type="submit" class="btn btn-block" id="submitBtn">상담 신청하기</button>
+        <div class="msg ok" id="okMsg">신청이 접수되었습니다. 담당자가 남겨주신 연락처로 안내드립니다.</div>
+        <div class="msg err" id="errMsg">신청에 실패했습니다. 잠시 후 다시 시도해주세요.</div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-brand">연금저축 안내소</div>
+      <p class="footer-note">
+        본 페이지의 세액공제·수령 관련 수치는 현행 연금저축 제도의 일반적인 기준을 참고한 것으로, 개인의 소득·상품·시점에 따라 달라질 수 있습니다.
+        구체적인 가입·투자 판단은 전문가 상담과 각 금융기관의 상품공시를 확인 후 결정하시기 바랍니다.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    function submitConsult(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = document.getElementById('submitBtn');
+      const okMsg = document.getElementById('okMsg');
+      const errMsg = document.getElementById('errMsg');
+      okMsg.style.display = 'none';
+      errMsg.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = '전송 중...';
+
+      const body = new URLSearchParams(new FormData(form));
+
+      fetch('/api/consult/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      })
+        .then(res => res.json().catch(() => ({ ok: false })))
+        .then(data => {
+          if (data.ok) {
+            okMsg.style.display = 'block';
+            form.reset();
+            okMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            errMsg.textContent = data.error || '신청에 실패했습니다. 잠시 후 다시 시도해주세요.';
+            errMsg.style.display = 'block';
+          }
+        })
+        .catch(() => { errMsg.style.display = 'block'; })
+        .finally(() => {
+          btn.disabled = false;
+          btn.textContent = '상담 신청하기';
+        });
+      return false;
+    }
+  </script>
+</body>
+</html>

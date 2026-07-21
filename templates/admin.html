@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상담신청 목록 · 관리자</title>
+<style>
+  body { margin: 0; background: #f1ede1; color: #1f2e28; font-family: -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 20px; }
+  .count { color: #536056; font-size: 13px; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; background: #fffcf5; border: 1px solid #d8d0ba; border-radius: 8px; overflow: hidden; font-size: 13px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e8e2ce; vertical-align: top; }
+  thead th { background: #e8e2ce; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #536056; }
+  tbody tr:last-child td { border-bottom: none; }
+  .empty { padding: 40px; text-align: center; color: #536056; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>상담신청 목록</h1>
+    <div class="count">총 {{ rows|length }}건</div>
+    {% if rows %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>접수시각(UTC)</th><th>이름</th><th>연락처</th><th>이메일</th>
+          <th>총급여</th><th>납입예정</th><th>관심전략</th><th>문의사항</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td><code>{{ r['id'] }}</code></td>
+          <td><code>{{ r['created_at'] }}</code></td>
+          <td>{{ r['name'] }}</td>
+          <td>{{ r['phone'] }}</td>
+          <td>{{ r['email'] }}</td>
+          <td>{{ r['salary'] }}</td>
+          <td>{{ r['amount'] }}</td>
+          <td>{{ r['strategy'] }}</td>
+          <td>{{ r['message'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">아직 접수된 상담신청이 없습니다.</div>
+    {% endif %}
+  </div>
+</body>
+</html>
