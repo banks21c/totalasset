@@ -24,7 +24,17 @@ INTERESTS = [
 
 _CSS = """
 <style id="ta-consult-style">
-  .ta-consult { --ta-label-w: 84px; max-width: 860px; }
+  /* 카드 껍데기. 원래 각 페이지의 .consult가 하던 역할을 컴포넌트가 가져온다. */
+  .ta-consult {
+    --ta-label-w: 84px;
+    max-width: 760px;
+    background: var(--card, transparent);
+    border: 1px solid var(--line, currentColor);
+    border-radius: 10px;
+    box-shadow: var(--shadow, none);
+    padding: 32px 36px;
+  }
+  @media (max-width: 560px) { .ta-consult { padding: 24px 20px; } }
   /* 한 줄에 두 필드씩: 라벨·입력칸·라벨·입력칸 4칼럼. */
   .ta-consult .ta-row {
     display: grid;
@@ -45,15 +55,17 @@ _CSS = """
     opacity: .95;
   }
   .ta-consult textarea { resize: vertical; min-height: 76px; }
+  /* 버튼은 내용 폭만 차지하고 폼 가운데에 선다. */
   .ta-consult .ta-actions {
-    display: grid; grid-template-columns: var(--ta-label-w) 1fr; gap: 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    margin-top: 22px;
   }
   /* 버튼 색은 페이지가 정의한 --accent / --accent-ink를 그대로 쓴다.
      폼이 들어가는 세 페이지 모두 이 두 변수를 갖고 있고, 값이 없을 때를
      대비해 폴백을 둔다. */
   .ta-consult .ta-submit {
-    grid-column: 2; padding: 12px 24px; font: inherit; font-weight: 700;
-    border-radius: 7px; cursor: pointer;
+    padding: 11px 28px; font: inherit; font-size: 14px; font-weight: 700;
+    border-radius: 7px; cursor: pointer; min-width: 160px;
     background: var(--accent, #a13d2e);
     color: var(--accent-ink, #ffffff);
     border: 1px solid var(--accent, #a13d2e);
@@ -61,19 +73,20 @@ _CSS = """
   .ta-consult .ta-submit:hover { opacity: .9; }
   .ta-consult .ta-submit[disabled] { opacity: .55; cursor: default; }
   .ta-consult .ta-msg {
-    display: none; grid-column: 2; margin-top: 12px; padding: 12px 14px;
+    display: none; width: 100%; padding: 12px 14px; text-align: center;
     border: 1px solid currentColor; border-radius: 7px; font-size: 14px;
   }
+  .ta-consult .ta-msg-ok { color: var(--success, #2f7a4d); }
+  .ta-consult .ta-msg-err { color: var(--accent, #a13d2e); }
   /* 두 필드를 나란히 두기 좁아지면 한 필드씩 한 줄로 내린다. */
   @media (max-width: 760px) {
     .ta-consult .ta-row { grid-template-columns: var(--ta-label-w) 1fr; }
   }
   /* 더 좁아지면 라벨도 입력칸 위로 올린다. */
   @media (max-width: 480px) {
-    .ta-consult .ta-row, .ta-consult .ta-row-wide,
-    .ta-consult .ta-actions { grid-template-columns: 1fr; }
+    .ta-consult .ta-row, .ta-consult .ta-row-wide { grid-template-columns: 1fr; }
     .ta-consult label { text-align: left; }
-    .ta-consult .ta-submit, .ta-consult .ta-msg { grid-column: 1; }
+    .ta-consult .ta-submit { width: 100%; }
   }
 </style>
 """
@@ -165,9 +178,9 @@ def render(product, default_interest=""):
         '<div class="ta-actions">'
         '<button type="submit" class="ta-submit" id="taConsultSubmit">'
         "상담 신청하기</button>"
-        '<div class="ta-msg" id="taConsultOk">'
+        '<div class="ta-msg ta-msg-ok" id="taConsultOk" role="status">'
         "신청이 접수되었습니다. 담당자가 남겨주신 연락처로 안내드립니다.</div>"
-        '<div class="ta-msg" id="taConsultErr">'
+        '<div class="ta-msg ta-msg-err" id="taConsultErr" role="alert">'
         "신청에 실패했습니다. 잠시 후 다시 시도해주세요.</div>"
         "</div>"
         "</form>"
