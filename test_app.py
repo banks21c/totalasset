@@ -1,5 +1,7 @@
 """통합 서버의 라우팅·네비 계약 검증. `python test_app.py`로 실행한다."""
 import app as application
+import consult
+import consult_form
 import hub
 import nav
 
@@ -137,6 +139,45 @@ check("생명보험 표 -> 종신보험", 'href="/insurance/whole-life"' in life
 check("생명보험 표 -> 정기보험", 'href="/insurance/term-life"' in life)
 check("종신보험 -> 정기보험", 'href="/insurance/term-life"' in whole_life)
 check("정기보험 -> 종신보험", 'href="/insurance/whole-life"' in term_life)
+
+print("상담 폼이 공통 컴포넌트로 3개 페이지에 들어간다")
+FORM_PAGES = {"/savings-pension": "연금저축", "/irp": "IRP", "/isa": "ISA"}
+for route, product in FORM_PAGES.items():
+    body = client.get(route).get_data(as_text=True)
+    check(f"{route} 공통 폼 있음", 'id="taConsultForm"' in body)
+    check(f"{route} 마커가 남지 않음", consult_form.MARKER not in body)
+    check(f"{route} 출처={product}", f'name="product" value="{product}"' in body)
+    check(f"{route} 옛 폼 제거됨", 'class="consult"' not in body)
+    check(f"{route} 옛 submitConsult 제거됨", "function submitConsult" not in body)
+    for field in ["name", "phone", "email", "interest", "message"]:
+        check(f"{route} 필드 {field}", f'name="{field}"' in body)
+    check(f"{route} 허니팟 유지", 'name="website"' in body)
+
+print("상담 폼이 없는 페이지에는 폼이 들어가지 않는다")
+for route in ["/", "/irp", "/national-pension", "/insurance/life"]:
+    body = client.get(route).get_data(as_text=True)
+    if route in FORM_PAGES:
+        continue
+    check(f"{route} 폼 없음", 'id="taConsultForm"' not in body)
+
+print("라벨과 입력칸이 한 줄에 배치된다")
+form_page = client.get("/irp").get_data(as_text=True)
+check("행이 2칼럼 그리드", "grid-template-columns: var(--ta-label-w) 1fr" in form_page)
+check("좁은 화면에서는 1칼럼으로 접힘", "grid-template-columns: 1fr;" in form_page)
+
+print("출처·관심분야가 실제로 저장된다")
+saved = client.post("/api/consult/", data={
+    "name": "테스트", "phone": "010-0000-0000",
+    "product": "IRP", "interest": "ISA", "message": "자동 테스트",
+})
+check("접수 성공", saved.get_json() == {"ok": True})
+with application.app.app_context():
+    latest = consult.rows()[0]
+    check("product 저장됨", latest["product"] == "IRP")
+    check("interest 저장됨", latest["interest"] == "ISA")
+    # 테스트가 남긴 행은 지운다
+    consult.get_db().execute("DELETE FROM consultations WHERE id = ?", (latest["id"],))
+    consult.get_db().commit()
 
 print("상담 API 계약")
 check("이름·연락처 없으면 400", client.post("/api/consult/", data={}).status_code == 400)

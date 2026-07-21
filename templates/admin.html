@@ -25,8 +25,8 @@
     <table>
       <thead>
         <tr>
-          <th>#</th><th>접수시각(UTC)</th><th>이름</th><th>연락처</th><th>이메일</th>
-          <th>총급여</th><th>납입예정</th><th>관심전략</th><th>문의사항</th>
+          <th>#</th><th>접수시각(UTC)</th><th>출처</th><th>이름</th><th>연락처</th><th>이메일</th>
+          <th>관심분야</th><th>총급여</th><th>납입예정</th><th>관심전략</th><th>문의사항</th>
         </tr>
       </thead>
       <tbody>
@@ -34,9 +34,11 @@
         <tr>
           <td><code>{{ r['id'] }}</code></td>
           <td><code>{{ r['created_at'] }}</code></td>
+          <td>{{ r['product'] }}</td>
           <td>{{ r['name'] }}</td>
           <td>{{ r['phone'] }}</td>
           <td>{{ r['email'] }}</td>
+          <td>{{ r['interest'] }}</td>
           <td>{{ r['salary'] }}</td>
           <td>{{ r['amount'] }}</td>
           <td>{{ r['strategy'] }}</td>

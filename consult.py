@@ -32,6 +32,13 @@ def close_db(exc=None):
         db.close()
 
 
+# 나중에 덧붙인 컬럼. 기존 DB에는 없으므로 있으면 건너뛰고 없으면 추가한다.
+ADDED_COLUMNS = {
+    "product": "TEXT",   # 어느 페이지에서 신청했는지
+    "interest": "TEXT",  # 관심 분야
+}
+
+
 def init_db():
     with sqlite3.connect(DB_PATH) as db:
         db.execute(
@@ -49,6 +56,10 @@ def init_db():
             )
             """
         )
+        existing = {row[1] for row in db.execute("PRAGMA table_info(consultations)")}
+        for column, column_type in ADDED_COLUMNS.items():
+            if column not in existing:
+                db.execute(f"ALTER TABLE consultations ADD COLUMN {column} {column_type}")
 
 
 def clean(value, limit=500):
@@ -77,12 +88,15 @@ def submit():
         clean(request.form.get("amount"), 60),
         clean(request.form.get("strategy"), 60),
         clean(request.form.get("message"), 2000),
+        clean(request.form.get("product"), 40),
+        clean(request.form.get("interest"), 60),
     )
     db = get_db()
     db.execute(
         """INSERT INTO consultations
-           (created_at, name, phone, email, salary, amount, strategy, message)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+           (created_at, name, phone, email, salary, amount, strategy, message,
+            product, interest)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         row,
     )
     db.commit()

@@ -27,6 +27,7 @@ from pathlib import Path
 from flask import Flask, jsonify, render_template, request
 
 import consult
+import consult_form
 import hub
 import insurance_hub
 import nav
@@ -38,9 +39,14 @@ app = Flask(__name__)
 app.teardown_appcontext(consult.close_db)
 
 
-def _serve(relative_path):
-    """`pages/` 아래 HTML을 읽어 네비 바를 주입해 반환한다."""
+def _serve(relative_path, product=None, interest=""):
+    """`pages/` 아래 HTML을 읽어 네비 바를 주입해 반환한다.
+
+    `product`를 넘기면 상담 폼 마커(`<!-- ta:consult-form -->`)도 함께 채운다.
+    """
     html = (PAGES_DIR / relative_path).read_text(encoding="utf-8")
+    if product:
+        html = consult_form.inject(html, product, interest)
     return nav.inject(html, request.path)
 
 
@@ -69,17 +75,17 @@ def national_pension_strategy():
 # ------------------------------------------------------- 3층 개인연금·절세
 @app.get("/savings-pension")
 def savings_pension():
-    return _serve("savings_pension/index.html")
+    return _serve("savings_pension/index.html", product="연금저축", interest="연금저축")
 
 
 @app.get("/irp")
 def irp():
-    return _serve("irp/index.html")
+    return _serve("irp/index.html", product="IRP", interest="IRP")
 
 
 @app.get("/isa")
 def isa():
-    return _serve("isa/index.html")
+    return _serve("isa/index.html", product="ISA", interest="ISA")
 
 
 # ------------------------------------------------------------------ 보험

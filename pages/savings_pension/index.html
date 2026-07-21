@@ -292,54 +292,7 @@
         <span class="section-note">남겨주신 연락처로 담당자가 안내드립니다</span>
       </div>
 
-      <form class="consult" onsubmit="return submitConsult(event)">
-        <div class="consult-grid">
-          <div>
-            <label for="name">이름 *</label>
-            <input id="name" name="name" type="text" required placeholder="홍길동">
-          </div>
-          <div>
-            <label for="phone">연락처 *</label>
-            <input id="phone" name="phone" type="tel" required placeholder="010-1234-5678">
-          </div>
-          <div>
-            <label for="email">이메일</label>
-            <input id="email" name="email" type="email" placeholder="you@example.com">
-          </div>
-          <div>
-            <label for="salary">총급여 구간</label>
-            <select id="salary" name="salary">
-              <option value="">선택 안 함</option>
-              <option>5,500만원 이하</option>
-              <option>5,500만원 초과</option>
-            </select>
-          </div>
-          <div>
-            <label for="amount">연 납입 예정액</label>
-            <input id="amount" name="amount" type="text" placeholder="예: 600만원">
-          </div>
-          <div>
-            <label for="strategy">관심 투자전략</label>
-            <select id="strategy" name="strategy">
-              <option value="">선택 안 함</option>
-              <option>미국 시장 지수 ETF (장기 성장형)</option>
-              <option>TDF (자동형)</option>
-              <option>글로벌 자산배분 (안정형)</option>
-              <option>아직 잘 모르겠음 · 추천 필요</option>
-            </select>
-          </div>
-          <div class="full">
-            <label for="message">문의사항</label>
-            <textarea id="message" name="message" rows="3" placeholder="궁금한 점을 자유롭게 남겨주세요."></textarea>
-          </div>
-        </div>
-        <!-- 허니팟: 사람 눈에 보이지 않는 봇 차단 필드 -->
-        <input type="text" id="website" name="website" autocomplete="off" tabindex="-1"
-               style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" aria-hidden="true">
-        <button type="submit" class="btn btn-block" id="submitBtn">상담 신청하기</button>
-        <div class="msg ok" id="okMsg">신청이 접수되었습니다. 담당자가 남겨주신 연락처로 안내드립니다.</div>
-        <div class="msg err" id="errMsg">신청에 실패했습니다. 잠시 후 다시 시도해주세요.</div>
-      </form>
+      <!-- ta:consult-form -->
     </div>
   </section>
 
@@ -354,42 +307,7 @@
   </footer>
 
   <script>
-    function submitConsult(e) {
-      e.preventDefault();
-      const form = e.target;
-      const btn = document.getElementById('submitBtn');
-      const okMsg = document.getElementById('okMsg');
-      const errMsg = document.getElementById('errMsg');
-      okMsg.style.display = 'none';
-      errMsg.style.display = 'none';
-      btn.disabled = true;
-      btn.textContent = '전송 중...';
-
-      const body = new URLSearchParams(new FormData(form));
-
-      fetch('/api/consult/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-      })
-        .then(res => res.json().catch(() => ({ ok: false })))
-        .then(data => {
-          if (data.ok) {
-            okMsg.style.display = 'block';
-            form.reset();
-            okMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else {
-            errMsg.textContent = data.error || '신청에 실패했습니다. 잠시 후 다시 시도해주세요.';
-            errMsg.style.display = 'block';
-          }
-        })
-        .catch(() => { errMsg.style.display = 'block'; })
-        .finally(() => {
-          btn.disabled = false;
-          btn.textContent = '상담 신청하기';
-        });
-      return false;
-    }
+    
   </script>
 </body>
 </html>
