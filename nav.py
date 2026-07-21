@@ -22,8 +22,8 @@ NAV_ITEMS = [
 # 영역 안에서 다시 갈라지는 하위 탭. 해당 영역에 들어왔을 때만 네비 바 아래에 붙는다.
 SUB_TABS = {
     "/insurance": [
-        ("/insurance/damage", "손해보험"),
         ("/insurance/life", "생명보험"),
+        ("/insurance/damage", "손해보험"),
         ("/insurance/whole-life", "종신보험"),
         ("/insurance/term-life", "정기보험"),
         ("/insurance/variable", "변액보험"),

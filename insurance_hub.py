@@ -38,13 +38,13 @@ HTML = """<!doctype html>
     <p class="lead">보험은 크게 손해보험과 생명보험으로 나뉩니다. 보상 방식이 근본적으로 다릅니다.</p>
 
     <div class="cards">
-      <a class="card" href="/insurance/damage">
-        <h2>손해보험 &rarr;</h2>
-        <p>재산상 손해를 실제 손해액만큼 보상. 화재 · 자동차 · 배상책임 · 보증</p>
-      </a>
       <a class="card" href="/insurance/life">
         <h2>생명보험 &rarr;</h2>
         <p>사람의 생사에 대해 약정한 금액을 정액 지급. 종신 · 정기 · 연금</p>
+      </a>
+      <a class="card" href="/insurance/damage">
+        <h2>손해보험 &rarr;</h2>
+        <p>재산상 손해를 실제 손해액만큼 보상. 화재 · 자동차 · 배상책임 · 보증</p>
       </a>
       <a class="card" href="/insurance/whole-life">
         <h2>종신보험 &rarr;</h2>

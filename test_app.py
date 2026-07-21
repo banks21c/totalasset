@@ -79,6 +79,18 @@ for route in ["/", "/irp", "/isa", "/national-pension"]:
     body = client.get(route).get_data(as_text=True)
     check(f"{route} 에는 보험 탭이 없음", 'class="ta-tabs"' not in body)
 
+print("보험 탭 순서")
+check(
+    "생명보험이 손해보험보다 앞",
+    [label for _path, label in nav.SUB_TABS["/insurance"]]
+    == ["생명보험", "손해보험", "종신보험", "정기보험", "변액보험"],
+)
+hub_page = client.get("/insurance").get_data(as_text=True)
+check(
+    "보험 허브 카드도 생명보험이 앞",
+    hub_page.index('href="/insurance/life"') < hub_page.index('href="/insurance/damage"'),
+)
+
 print("보험 탭에서 현재 상품이 활성 표시된다")
 for route, expected in [
     ("/insurance/whole-life", "종신보험"),
