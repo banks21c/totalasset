@@ -18,6 +18,8 @@ PAGE_ROUTES = [
     "/insurance/whole-life",
     "/insurance/term-life",
     "/insurance/variable",
+    "/bond",
+    "/realestate",
 ]
 
 failures = []
@@ -47,12 +49,14 @@ for route, expected in [
     ("/national-pension/strategy", "국민연금"),
     ("/insurance/life", "보험"),
     ("/isa", "ISA"),
+    ("/bond", "채권"),
+    ("/realestate", "부동산"),
 ]:
     body = client.get(route).get_data(as_text=True)
     marker = f'aria-current="page">{expected}<'
     check(f"{route} -> {expected} 활성", marker in body)
 
-print("허브에서 5개 영역으로 가는 링크가 모두 있다")
+print("허브에서 7개 영역으로 가는 링크가 모두 있다")
 home = client.get("/").get_data(as_text=True)
 for path, _title, _desc in hub.CARDS:
     check(f"허브 -> {path}", f'href="{path}"' in home)
@@ -77,7 +81,7 @@ for route in ["/insurance", "/insurance/damage", "/insurance/life",
     for tab_path, tab_label in nav.SUB_TABS["/insurance"]:
         check(f"{route} 탭 '{tab_label}' 링크", f'href="{tab_path}"' in body)
 
-for route in ["/", "/irp", "/isa", "/national-pension"]:
+for route in ["/", "/irp", "/isa", "/national-pension", "/bond", "/realestate"]:
     body = client.get(route).get_data(as_text=True)
     check(f"{route} 에는 보험 탭이 없음", 'class="ta-tabs"' not in body)
 
@@ -170,6 +174,36 @@ check("생명보험 표 -> 종신보험", 'href="/insurance/whole-life"' in life
 check("생명보험 표 -> 정기보험", 'href="/insurance/term-life"' in life)
 check("종신보험 -> 정기보험", 'href="/insurance/term-life"' in whole_life)
 check("정기보험 -> 종신보험", 'href="/insurance/whole-life"' in term_life)
+
+print("채권 페이지가 사이트 공통 스타일을 따르고 PPT 핵심 내용을 담는다")
+bond = client.get("/bond").get_data(as_text=True)
+check("/bond Pretendard 사용", "Pretendard" in bond)
+check("/bond 본문 폭 960px", "max-width: 960px" in bond)
+check("/bond 다크모드 지원", "prefers-color-scheme" in bond)
+check("/bond 공통 accent 사용", "#a13d2e" in bond)
+check("/bond 테마 토글 대응", '[data-theme="dark"]' in bond)
+# 원본 PPT의 뼈대 — 4대 구성요소, 계산 예시, 6대 리스크, 신용등급, 금리 사이클
+for keyword in ["액면가", "표면금리", "만기", "발행자",
+                "112만원", "국채", "회사채",
+                "금리 리스크", "신용 리스크", "유동성", "인플레이션", "재투자", "환율",
+                "AAA~AA", "CCC~D", "최적기"]:
+    check(f"/bond '{keyword}' 포함", keyword in bond)
+check("/bond 금리-가격 반비례 설명", "반비례" in bond)
+check("/bond 표는 가로 스크롤 컨테이너 안에 있음", 'class="table-scroll"' in bond)
+check("/bond 교육용 고지 있음", "권유하지 않습니다" in bond)
+
+print("부동산 페이지가 통합 서버에 맞게 정렬된다")
+re_page = client.get("/realestate").get_data(as_text=True)
+check("/realestate 본문 폭이 사이트 공통 960px", "max-width: 960px" in re_page)
+check("/realestate 옛 1080px 폭이 남아있지 않음", "max-width: 1080px" not in re_page)
+check("/realestate 사이드 피커가 네비 높이만큼 내려감", "calc(82px + var(--ta-nav-h, 0px))" in re_page)
+check("/realestate 다크모드 지원", "prefers-color-scheme" in re_page)
+# 원본 페이지의 3개 섹션이 그대로 살아있는지
+for anchor in ["#region", "#recommend", "#checklist"]:
+    check(f"/realestate '{anchor}' 섹션 링크", f'href="{anchor}"' in re_page)
+for keyword in ["서울 강남", "경기 화성", "부산 해운대", "인천 송도", "대전 둔산",
+                "오피스텔", "임장은 필수", "권리관계 확인"]:
+    check(f"/realestate '{keyword}' 포함", keyword in re_page)
 
 print("상담 폼이 공통 컴포넌트로 3개 페이지에 들어간다")
 FORM_PAGES = {"/savings-pension": "연금저축", "/irp": "IRP", "/isa": "ISA"}

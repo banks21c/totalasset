@@ -15,6 +15,8 @@
     GET  /insurance/whole-life      종신보험
     GET  /insurance/term-life       정기보험
     GET  /insurance/variable        변액보험
+    GET  /bond                      채권 안내
+    GET  /realestate                부동산 투자 길잡이
     POST /api/consult/              상담신청 접수
     GET  /admin/consults            상담신청 목록 (ADMIN_TOKEN 필요)
 
@@ -119,6 +121,18 @@ def insurance_variable():
     return _serve("insurance/variable.html")
 
 
+# ------------------------------------------------------------------ 채권
+@app.get("/bond")
+def bond():
+    return _serve("bond/index.html")
+
+
+# ---------------------------------------------------------------- 부동산
+@app.get("/realestate")
+def realestate():
+    return _serve("realestate/index.html")
+
+
 # ------------------------------------------------------------------ 상담
 @app.post("/api/consult/")
 def api_consult():
@@ -134,4 +148,8 @@ def admin_consults():
 
 if __name__ == "__main__":
     consult.init_db()
-    app.run(host="0.0.0.0", port=5000, debug=bool(os.environ.get("FLASK_DEBUG")))
+    app.run(
+        host="0.0.0.0",
+        port=int(os.environ.get("PORT", 5000)),
+        debug=bool(os.environ.get("FLASK_DEBUG")),
+    )
