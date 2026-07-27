@@ -73,19 +73,56 @@
   .nav ul a:hover{background:var(--bg);color:var(--brand)}
   .menu-btn{display:none;background:none;border:none;font-size:1.5rem;color:var(--brand);cursor:pointer}
 
-  /* ── 히어로 ── */
-  .hero{
-    background:linear-gradient(135deg,var(--brand),var(--brand-dark));
-    color:var(--on-brand);padding:117px 24px 80px;text-align:center;
+  /* ── 히어로: 통장 카드 (IRP·ISA 페이지와 같은 형태) ── */
+  @media (prefers-reduced-motion: no-preference) {
+    .rise { animation: rise .6s cubic-bezier(.2,.7,.3,1) both; }
+    @keyframes rise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
   }
-  .hero h1{font-size:2.4rem;font-weight:800;letter-spacing:-1px;margin-bottom:14px}
-  .hero p{font-size:1.1rem;opacity:.92;max-width:620px;margin:0 auto 28px}
+  .hero{padding:44px 24px;max-width:960px;margin:0 auto}
+  .passbook{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    display:grid;
+    grid-template-columns:1fr 220px;
+    overflow:hidden;
+  }
+  .passbook-main{padding:40px 40px 32px}
+  .eyebrow{
+    font-family:'JetBrains Mono','SF Mono','Consolas','Menlo',monospace;
+    font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:14px;
+  }
+  .hero h1{font-size:32px;font-weight:800;letter-spacing:-.01em;max-width:22ch;margin-bottom:0}
+  .hero p{margin:14px 0 28px;color:var(--muted);font-size:15px;max-width:48ch}
   .hero .cta{
-    display:inline-block;background:var(--card);color:var(--brand);
-    padding:14px 30px;border-radius:30px;font-weight:800;box-shadow:var(--shadow);
-    transition:transform .15s;
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    background:var(--brand);color:var(--on-brand);
+    padding:12px 20px;border-radius:7px;font-weight:700;font-size:14px;
+    transition:transform .15s ease, box-shadow .15s ease;
   }
-  .hero .cta:hover{transform:translateY(-2px)}
+  .hero .cta:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(161,61,46,.28)}
+  .hero .cta:active{transform:translateY(0)}
+  /* 표지 패널 + 밀랍 도장 */
+  .passbook-cover{
+    background:var(--card-stub);
+    border-left:1px solid var(--border);
+    padding:28px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  }
+  .seal{
+    width:96px;height:96px;border-radius:50%;
+    border:3px double var(--brand);color:var(--brand);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:800;font-size:13px;letter-spacing:.02em;line-height:1.35;
+    transform:rotate(-8deg);
+  }
+  .cover-label{
+    font-family:'JetBrains Mono','SF Mono','Consolas','Menlo',monospace;
+    font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);text-align:center;
+  }
 
   /* ── 레이아웃 ── */
   main{max-width:960px;margin:0 auto;padding:0 24px}
@@ -192,6 +229,10 @@
 
   @media(max-width:760px){
     .hero h1{font-size:1.8rem}
+    .hero{padding:28px 24px}
+    .passbook{grid-template-columns:1fr}
+    .passbook-main{padding:28px 24px 24px}
+    .passbook-cover{border-left:none;border-top:1px solid var(--border);flex-direction:row;padding:20px}
     .calc{grid-template-columns:1fr}
     .nav ul{display:none;position:absolute;top:100%;left:0;right:0;background:var(--card);
       flex-direction:column;padding:10px 24px;border-bottom:1px solid var(--border)}
@@ -292,10 +333,19 @@
 </header>
 
 <div id="top" class="hero">
-  <h1>국민연금, 쉽고 정확하게 안내합니다</h1>
-  <p>가입 대상부터 예상 수령액, 수급 개시 연령까지 —
-     국민연금의 핵심을 한 페이지에서 확인하세요.</p>
-  <a href="#calc" class="cta">💰 내 예상 연금 계산하기</a>
+  <div class="passbook rise">
+    <div class="passbook-main">
+      <div class="eyebrow">1층 공적연금 · 제도 안내</div>
+      <h1>국민연금, 쉽고 정확하게 안내합니다</h1>
+      <p>가입 대상부터 예상 수령액, 수급 개시 연령까지 —
+         국민연금의 핵심을 한 페이지에서 확인하세요.</p>
+      <a href="#calc" class="cta">내 예상 연금 계산하기</a>
+    </div>
+    <div class="passbook-cover">
+      <div class="seal">의무가입<br>만 18~59세</div>
+      <div class="cover-label">National Pension</div>
+    </div>
+  </div>
 </div>
 
 <main>

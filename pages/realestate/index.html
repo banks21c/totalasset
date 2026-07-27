@@ -121,8 +121,21 @@
 
   /* ---------- Hero ---------- */
   .hero { border-top: 0; padding: 66px 0 60px; }
-  .hero-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 44px; align-items: center; }
+  /* stretch: 두 상자가 위를 기준으로 서고, 높이는 더 긴 쪽에 맞춰 같아진다. */
+  .hero-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 44px; align-items: stretch; }
   @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; gap: 32px; } }
+  /* 좌측 카피도 우측 .hero-card와 같은 상자에 담는다.
+     다른 페이지(국민연금·연금저축·IRP·ISA)의 히어로 카드와 같은 구성이다. */
+  .hero-copy {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 40px 40px 34px;
+    display: flex; flex-direction: column;
+  }
+  /* 높이를 옆 카드에 맞추느라 생긴 여백은 본문과 버튼 사이로 보낸다.
+     버튼이 상자 바닥에 붙어 빈 공간이 의도된 것으로 읽힌다. */
+  .hero-copy .hero-cta { margin-top: auto; padding-top: 30px; }
+  @media (max-width: 860px) { .hero-copy { padding: 28px 24px 26px; } }
   .hero h1 { font-size: clamp(34px, 6vw, 56px); line-height: 1.08; letter-spacing: -0.045em; margin: 20px 0 20px; font-weight: 800; text-wrap: balance; }
   .hero h1 .hl { color: var(--brass); }
   .hero p.lead { font-size: 18px; }
@@ -153,6 +166,12 @@
   .def h4 { margin: 0 0 4px; font-size: 15px; }
   .def h4 small { color: var(--ink-faint); font-weight: 600; letter-spacing: 0.02em; }
   .def p { margin: 0; color: var(--ink-soft); font-size: 14.5px; }
+  /* 사이클 카드 안에 들어가는 정의 블록. 좁은 열이라 한 줄씩 쌓고,
+     바로 위 '원칙' 블록과 같은 크기로 맞춘다. */
+  .defs-stack { grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+  .defs-stack .def { padding: 14px 16px; }
+  .defs-stack .def h4 { font-size: 14px; }
+  .defs-stack .def p { font-size: 13px; }
 
   /* ---------- Region selector ---------- */
   .tabs { display: flex; flex-wrap: wrap; gap: 9px; margin: 28px 0 26px; }
@@ -271,7 +290,7 @@
   <section class="hero">
     <div class="wrap">
       <div class="hero-grid">
-        <div>
+        <div class="hero-copy">
           <span class="eyebrow">지역·유형 맞춤 분석</span>
           <h1>지역을 고르고, 예산을 넣으면<br><span class="hl">나에게 맞는 투자</span>가 보입니다.</h1>
           <p class="lead">부동산 투자는 &lsquo;소유&rsquo;가 아니라 시간·자본·리스크를 감수하고 미래 수익을 기대하는 자산 운용입니다. 지역별 특성과 예산·목적을 조합해, 감이 아닌 근거로 판단하세요.</p>
@@ -294,18 +313,18 @@
               <p style="font-size:13px;"><b style="color:var(--brass)">원칙</b> &mdash; 남들이 공포에 팔 때 사고, 탐욕에 살 때 판다. 단, <b>실거주</b> 목적이면 타이밍보다 <b>필요 시점</b>이 우선입니다.</p>
             </div>
           </div>
-        </aside>
-      </div>
 
-      <div class="defs">
-        <div class="def">
-          <h4>자본이득 <small>Capital Gain</small></h4>
-          <p>매입가와 매도가의 차익. 시세 차익·개발 이익이 여기 속합니다. 상승기·개발 호재에 민감합니다.</p>
-        </div>
-        <div class="def">
-          <h4>운영수익 <small>Income Gain</small></h4>
-          <p>보유 중 발생하는 정기 수익. 임대료·월세·상가 수익. 안정적 현금흐름을 원할 때 중심이 됩니다.</p>
-        </div>
+          <div class="defs defs-stack">
+            <div class="def">
+              <h4>자본이득 <small>Capital Gain</small></h4>
+              <p>매입가와 매도가의 차익. 시세 차익·개발 이익이 여기 속합니다. 상승기·개발 호재에 민감합니다.</p>
+            </div>
+            <div class="def">
+              <h4>운영수익 <small>Income Gain</small></h4>
+              <p>보유 중 발생하는 정기 수익. 임대료·월세·상가 수익. 안정적 현금흐름을 원할 때 중심이 됩니다.</p>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   </section>
