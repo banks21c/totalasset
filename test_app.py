@@ -20,6 +20,7 @@ PAGE_ROUTES = [
     "/insurance/variable",
     "/bond",
     "/realestate",
+    "/privacy-policy",
 ]
 
 failures = []

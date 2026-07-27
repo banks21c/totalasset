@@ -17,6 +17,7 @@
     GET  /insurance/variable        변액보험
     GET  /bond                      채권 안내
     GET  /realestate                부동산 투자 길잡이
+    GET  /privacy-policy            개인정보처리방침
     POST /api/consult/              상담신청 접수
     GET  /admin/consults            상담신청 목록 (ADMIN_TOKEN 필요)
 
@@ -131,6 +132,12 @@ def bond():
 @app.get("/realestate")
 def realestate():
     return _serve("realestate/index.html")
+
+
+# ------------------------------------------------------------ 개인정보
+@app.get("/privacy-policy")
+def privacy_policy():
+    return _serve("privacy_policy/index.html")
 
 
 # ------------------------------------------------------------------ 상담

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextFinUp - 개인정보처리방침</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --ink:#1f2e28; --paper:#f1ede1; --card:#fffcf5; --line:#d8d0ba; --accent:#a13d2e; --muted:#536056;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#eef0ea; --paper:#12160f; --card:#1c231a; --line:#3a4536; --accent:#e07a5f; --muted:#a3aa9c; }
+  }
+  :root[data-theme="dark"] {
+    --ink:#eef0ea; --paper:#12160f; --card:#1c231a; --line:#3a4536; --accent:#e07a5f; --muted:#a3aa9c;
+  }
+  :root[data-theme="light"] {
+    --ink:#1f2e28; --paper:#f1ede1; --card:#fffcf5; --line:#d8d0ba; --accent:#a13d2e; --muted:#536056;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); line-height:1.75;
+         font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif; }
+  .wrap { max-width:960px; margin:0 auto; padding:56px 24px 72px; }
+  h1 { font-size:30px; margin:0 0 10px; letter-spacing:-.02em; }
+  p.lead { color:var(--muted); margin:0 0 12px; font-size:15px; }
+  .updated { color:var(--muted); font-size:13px; margin:0 0 40px; }
+  h2 { font-size:18px; margin:40px 0 12px; color:var(--accent); letter-spacing:-.01em; }
+  p, li { font-size:15px; }
+  ul { padding-left:20px; margin:0 0 12px; }
+  li { margin-bottom:6px; }
+  table { width:100%; border-collapse:collapse; margin:12px 0 4px; font-size:14px; }
+  th, td { border:1px solid var(--line); padding:10px 12px; text-align:left; vertical-align:top; }
+  th { background:var(--card); font-weight:700; white-space:nowrap; }
+  .note { background:var(--card); border:1px solid var(--line); border-left:3px solid var(--accent);
+          border-radius:0 10px 10px 0; padding:16px 20px; margin:16px 0; font-size:14px; color:var(--muted); }
+  footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line);
+           font-size:13px; color:var(--muted); }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<style id="ta-nav-style">
+  /* 본문 칼럼과 같은 폭·여백. 네비와 탭이 본문 왼쪽 끝에 맞춰 선다. */
+  :root { --ta-nav-h: 52px; --ta-col: 960px; --ta-col-pad: 24px; }
+  /* 링크마다 자체 좌우 패딩이 있어, 글자가 본문 왼쪽 끝에 서려면 그만큼 빼줘야 한다.
+     --ta-item-pad는 각 바가 자기 링크 패딩 값을 넣는다. */
+  .ta-inner {
+    width: 100%; max-width: var(--ta-col); margin: 0 auto;
+    padding: 0 calc(var(--ta-col-pad) - var(--ta-item-pad, 0px));
+    display: flex; align-items: center;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .ta-inner::-webkit-scrollbar { display: none; }
+  /* 페이지 자체의 sticky 헤더(예: 국민연금)가 네비 바 아래로 붙도록 밀어준다.
+     `top`은 positioned 요소에만 적용되므로 static 헤더에는 아무 영향이 없다. */
+  body > header, body > .header { top: var(--ta-nav-h) !important; }
+  .ta-nav {
+    position: sticky; top: 0; z-index: 10000;
+    display: flex; align-items: center;
+    height: var(--ta-nav-h);
+    background: #12160f; color: #eef0ea;
+    font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    font-size: 14px; line-height: 1;
+  }
+  .ta-nav .ta-inner { --ta-item-pad: 4px; gap: 4px; }
+  .ta-nav a { color: inherit; text-decoration: none; white-space: nowrap; }
+  .ta-nav .ta-brand {
+    font-weight: 700; margin-right: 12px; padding: 8px 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ta-nav .ta-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: linear-gradient(135deg, #e07a5f, #a8c686); flex: none;
+  }
+  .ta-nav .ta-link { padding: 8px 12px; border-radius: 7px; opacity: .72; }
+  .ta-nav .ta-link:hover { opacity: 1; background: rgba(255,255,255,.09); }
+  .ta-nav .ta-link[aria-current="page"] {
+    opacity: 1; background: rgba(224,122,95,.22); color: #f2a68e; font-weight: 600;
+  }
+
+  /* 하위 탭. 페이지마다 배경색이 달라 색을 물려받지 않고 자체 색을 쓴다. */
+  .ta-tabs {
+    position: sticky; top: var(--ta-nav-h); z-index: 9998;
+    display: flex;
+    /* 바탕은 본문과 같은 색. 탭이 놓인 선반 역할만 한다. */
+    background: var(--paper, var(--bg, transparent));
+    font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    font-size: 14px;
+    padding-top: 8px;
+  }
+  /* 탭이 올라앉는 밑줄. .ta-inner 폭(본문 칼럼)에 맞춰 그린다. */
+  .ta-tabs .ta-inner {
+    --ta-item-pad: 0px; align-items: stretch;
+    border-bottom: 1px solid var(--line, var(--border, currentColor));
+  }
+  .ta-tabs a {
+    color: var(--ink-soft, var(--muted, inherit)); text-decoration: none; white-space: nowrap;
+    padding: 9px 18px;
+    background: var(--card-stub, transparent);
+    border: 1px solid var(--line, var(--border, currentColor));
+    border-radius: 7px 7px 0 0;
+    /* 이웃 탭과 테두리를 겹쳐 한 줄로 공유한다 → 탭끼리 붙는다. */
+    margin-right: -1px;
+    /* 밑줄 위로 1px 내려앉아, 선택된 탭이 본문과 이어질 수 있게 한다. */
+    margin-bottom: -1px;
+  }
+  .ta-tabs a:hover { color: var(--ink, inherit); }
+  /* 눌린 탭: 본문과 같은 바탕이 되고 아래 선이 끊겨 본문으로 이어진다. */
+  .ta-tabs a[aria-current="page"] {
+    background: var(--paper, var(--bg, transparent));
+    border-bottom-color: transparent;
+    color: var(--accent, var(--brand, inherit));
+    font-weight: 700;
+    position: relative; z-index: 1;
+  }
+</style>
+<nav class="ta-nav"><div class="ta-inner"><a class="ta-brand" href="../index.html"><span class="ta-dot"></span>NextFinUp 종합자산관리</a><a class="ta-link" href="../national-pension/index.html">국민연금</a><a class="ta-link" href="../savings-pension/index.html">연금저축</a><a class="ta-link" href="../irp/index.html">IRP</a><a class="ta-link" href="../isa/index.html">ISA</a><a class="ta-link" href="../insurance/index.html">보험</a><a class="ta-link" href="../bond/index.html">채권</a><a class="ta-link" href="../realestate/index.html">부동산</a></div></nav>
+  <div class="wrap">
+    <h1>개인정보처리방침</h1>
+    <p class="lead">NextFinUp 종합자산관리(이하 &ldquo;서비스&rdquo;)가 이용자의 개인정보를 어떻게 수집하고 다루는지 안내합니다.</p>
+    <p class="updated">시행일 2026년 7월 27일</p>
+
+    <div class="note">
+      이 사이트는 노후 자산 제도를 설명하는 <strong>교육용 데모</strong>입니다. 특정 금융상품의
+      가입을 권유하지 않으며, 상담신청 외에는 개인정보를 수집하지 않습니다.
+    </div>
+
+    <h2>1. 수집하는 개인정보 항목</h2>
+    <p>상담신청 폼을 제출하실 때에 한해 아래 항목을 수집합니다. 회원가입 절차는 없습니다.</p>
+    <table>
+      <tr><th>구분</th><th>항목</th></tr>
+      <tr><td>필수</td><td>이름, 연락처</td></tr>
+      <tr><td>선택</td><td>이메일, 연 소득, 납입 예정 금액, 관심 전략, 관심 분야, 문의사항</td></tr>
+      <tr><td>자동 생성</td><td>신청 일시, 신청한 페이지(연금저축 · IRP · ISA 중 어디에서 접수했는지)</td></tr>
+    </table>
+
+    <h2>2. 수집 및 이용 목적</h2>
+    <ul>
+      <li>상담신청 접수 확인 및 담당자 안내 연락</li>
+      <li>문의하신 내용에 대한 답변</li>
+    </ul>
+    <p>수집한 정보를 위 목적 외의 용도로 이용하지 않습니다. 광고성 정보 전송에는 사용하지 않습니다.</p>
+
+    <h2>3. 보유 및 파기</h2>
+    <ul>
+      <li>상담이 종료된 날부터 <strong>1년간</strong> 보관한 뒤 지체 없이 파기합니다.</li>
+      <li>이용자가 삭제를 요청하시면 즉시 파기합니다.</li>
+      <li>전자적 파일 형태로 보관되며, 파기 시 복구할 수 없는 방법으로 삭제합니다.</li>
+    </ul>
+
+    <h2>4. 제3자 제공 및 처리 위탁</h2>
+    <p>이용자의 개인정보를 제3자에게 제공하거나 외부에 처리를 위탁하지 않습니다.
+       법령에 따라 수사기관이 적법한 절차로 요구하는 경우에만 예외로 합니다.</p>
+
+    <h2>5. 쿠키</h2>
+    <p>서비스는 화면 표시 설정을 기억하는 등 이용에 꼭 필요한 범위에서만 쿠키를 사용합니다.
+       광고 목적의 추적 쿠키나 제3자 분석 도구는 사용하지 않습니다.</p>
+    <p>쿠키 저장을 원하지 않으시면 브라우저 설정에서 거부하실 수 있습니다. 다만 일부 설정이
+       유지되지 않을 수 있습니다.</p>
+
+    <h2>6. 이용자의 권리</h2>
+    <p>이용자는 언제든지 본인의 개인정보에 대해 열람 · 정정 · 삭제 · 처리정지를 요청하실 수 있습니다.
+       아래 연락처로 요청하시면 지체 없이 처리합니다.</p>
+
+    <h2>7. 안전성 확보 조치</h2>
+    <ul>
+      <li>접수된 상담 내역은 관리자 인증을 거친 경우에만 조회할 수 있습니다.</li>
+      <li>개인정보를 취급하는 인원을 최소한으로 제한합니다.</li>
+    </ul>
+
+    <h2>8. 문의처</h2>
+    <p>개인정보 관련 문의 및 요청은 상담신청 폼의 문의사항란으로 남겨 주시기 바랍니다.</p>
+
+    <h2>9. 방침의 변경</h2>
+    <p>이 방침이 변경되는 경우 시행일과 변경 내용을 이 페이지에 게시합니다.</p>
+
+    <footer>
+      <strong>NextFinUp</strong> · 교육용 일반 정보이며 특정 상품의 가입 권유가 아닙니다.
+    </footer>
+  </div>
+</body>
+</html>

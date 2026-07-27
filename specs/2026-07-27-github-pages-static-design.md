@@ -108,6 +108,23 @@ Flask로 서빙할 때는 HTML 주석이라 아무 영향이 없다. 정적 빌�
 
 기존 `test_app.py`도 계속 통과해야 한다. Flask 서빙 동작은 바뀌지 않는다.
 
+## 구현 중 발견한 것
+
+링크 검증 테스트가 **원래부터 깨져 있던 링크 두 종류**를 잡아냈다. 둘 다 Flask에서도
+404였다. 정적 빌드가 만든 문제가 아니라 드러낸 문제다.
+
+1. **파비콘 4개** (`/static/articles/favicon.ico` 등) — `bond`, `irp`, `isa` 페이지의
+   `<head>`에 있었으나 `static/` 디렉터리 자체가 존재하지 않는다. 다른 프로젝트에서
+   복사해 온 흔적으로 보인다. 죽은 `<link>` 태그를 제거했다.
+2. **`/privacy-policy/`** — `irp`, `isa` 하단 쿠키 동의 배너의 "자세히 보기" 링크가
+   없는 페이지를 가리켰다. 상담 폼으로 이름·연락처를 받고 쿠키 배너까지 있는 사이트라
+   방침 페이지를 만드는 쪽으로 정했다. `pages/privacy_policy/index.html`과
+   `GET /privacy-policy` 라우트를 추가하고, 두 링크의 후행 슬래시를 떼어
+   라우트와 맞췄다(Flask는 `/privacy-policy/`를 `/privacy-policy` 규칙으로 받지 않는다).
+
+방침 문서의 내용은 초안이다. 보유 기간(1년) 등 실제 운영 정책과 다른 부분은
+사용자가 검토해 고쳐야 한다.
+
 ## 변경되는 파일
 
 | 파일 | 변경 |
@@ -117,9 +134,13 @@ Flask로 서빙할 때는 HTML 주석이라 아무 영향이 없다. 정적 빌�
 | `pages/savings_pension/index.html` | 상담 섹션에 마커 쌍 추가 |
 | `pages/irp/index.html` | 상담 섹션에 마커 쌍 추가 |
 | `pages/isa/index.html` | 상담 섹션에 마커 쌍 추가 |
+| `pages/privacy_policy/index.html` | 신규 — 개인정보처리방침 |
+| `pages/bond/index.html` | 죽은 파비콘 `<link>` 제거 |
+| `app.py` | `GET /privacy-policy` 라우트 추가 |
+| `test_app.py` | `/privacy-policy`를 페이지 목록에 추가 |
 | `docs/` | 신규 — 빌드 산출물 (커밋한다) |
 | `specs/` | 신규 — 이 문서 |
-| `app.py`, `nav.py`, `hub.py`, `consult*.py` | 변경 없음 |
+| `nav.py`, `hub.py`, `consult*.py` | 변경 없음 |
 
 ## 배포 절차
 

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextFinUp 종합자산관리</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --ink:#1f2e28; --paper:#f1ede1; --card:#fffcf5; --line:#d8d0ba; --accent:#a13d2e; --muted:#536056;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink:#eef0ea; --paper:#12160f; --card:#1c231a; --line:#3a4536; --accent:#e07a5f; --muted:#a3aa9c; }
+  }
+  :root[data-theme="dark"] {
+    --ink:#eef0ea; --paper:#12160f; --card:#1c231a; --line:#3a4536; --accent:#e07a5f; --muted:#a3aa9c;
+  }
+  :root[data-theme="light"] {
+    --ink:#1f2e28; --paper:#f1ede1; --card:#fffcf5; --line:#d8d0ba; --accent:#a13d2e; --muted:#536056;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); line-height:1.65;
+         font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif; }
+  .wrap { max-width:960px; margin:0 auto; padding:56px 20px 64px; }
+  h1 { font-size:32px; margin:0 0 10px; letter-spacing:-.02em; }
+  p.lead { color:var(--muted); margin:0 0 40px; font-size:16px; }
+  h2.sec { font-size:15px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);
+           margin:48px 0 16px; font-weight:600; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+  a.card { display:block; background:var(--card); border:1px solid var(--line); border-radius:14px;
+           padding:24px; text-decoration:none; color:inherit; transition:border-color .15s, transform .15s; }
+  a.card:hover { border-color:var(--accent); transform:translateY(-2px); }
+  a.card h3 { margin:0 0 8px; font-size:19px; color:var(--accent); }
+  a.card p { margin:0; font-size:14px; color:var(--muted); }
+  .layers { display:flex; flex-direction:column; gap:10px; }
+  .layer { display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;
+           background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; }
+  .layer .n { font-weight:800; color:var(--accent); font-size:14px; flex:none; width:32px; }
+  .layer .name { font-weight:700; font-size:16px; flex:none; }
+  .layer .items { font-size:13px; color:var(--muted); flex:none; }
+  .layer .desc { font-size:13px; color:var(--muted); margin-left:auto; }
+  footer { margin-top:56px; padding-top:20px; border-top:1px solid var(--line);
+           font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+<style id="ta-nav-style">
+  /* 본문 칼럼과 같은 폭·여백. 네비와 탭이 본문 왼쪽 끝에 맞춰 선다. */
+  :root { --ta-nav-h: 52px; --ta-col: 960px; --ta-col-pad: 24px; }
+  /* 링크마다 자체 좌우 패딩이 있어, 글자가 본문 왼쪽 끝에 서려면 그만큼 빼줘야 한다.
+     --ta-item-pad는 각 바가 자기 링크 패딩 값을 넣는다. */
+  .ta-inner {
+    width: 100%; max-width: var(--ta-col); margin: 0 auto;
+    padding: 0 calc(var(--ta-col-pad) - var(--ta-item-pad, 0px));
+    display: flex; align-items: center;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .ta-inner::-webkit-scrollbar { display: none; }
+  /* 페이지 자체의 sticky 헤더(예: 국민연금)가 네비 바 아래로 붙도록 밀어준다.
+     `top`은 positioned 요소에만 적용되므로 static 헤더에는 아무 영향이 없다. */
+  body > header, body > .header { top: var(--ta-nav-h) !important; }
+  .ta-nav {
+    position: sticky; top: 0; z-index: 10000;
+    display: flex; align-items: center;
+    height: var(--ta-nav-h);
+    background: #12160f; color: #eef0ea;
+    font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    font-size: 14px; line-height: 1;
+  }
+  .ta-nav .ta-inner { --ta-item-pad: 4px; gap: 4px; }
+  .ta-nav a { color: inherit; text-decoration: none; white-space: nowrap; }
+  .ta-nav .ta-brand {
+    font-weight: 700; margin-right: 12px; padding: 8px 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ta-nav .ta-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: linear-gradient(135deg, #e07a5f, #a8c686); flex: none;
+  }
+  .ta-nav .ta-link { padding: 8px 12px; border-radius: 7px; opacity: .72; }
+  .ta-nav .ta-link:hover { opacity: 1; background: rgba(255,255,255,.09); }
+  .ta-nav .ta-link[aria-current="page"] {
+    opacity: 1; background: rgba(224,122,95,.22); color: #f2a68e; font-weight: 600;
+  }
+
+  /* 하위 탭. 페이지마다 배경색이 달라 색을 물려받지 않고 자체 색을 쓴다. */
+  .ta-tabs {
+    position: sticky; top: var(--ta-nav-h); z-index: 9998;
+    display: flex;
+    /* 바탕은 본문과 같은 색. 탭이 놓인 선반 역할만 한다. */
+    background: var(--paper, var(--bg, transparent));
+    font-family: 'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+    font-size: 14px;
+    padding-top: 8px;
+  }
+  /* 탭이 올라앉는 밑줄. .ta-inner 폭(본문 칼럼)에 맞춰 그린다. */
+  .ta-tabs .ta-inner {
+    --ta-item-pad: 0px; align-items: stretch;
+    border-bottom: 1px solid var(--line, var(--border, currentColor));
+  }
+  .ta-tabs a {
+    color: var(--ink-soft, var(--muted, inherit)); text-decoration: none; white-space: nowrap;
+    padding: 9px 18px;
+    background: var(--card-stub, transparent);
+    border: 1px solid var(--line, var(--border, currentColor));
+    border-radius: 7px 7px 0 0;
+    /* 이웃 탭과 테두리를 겹쳐 한 줄로 공유한다 → 탭끼리 붙는다. */
+    margin-right: -1px;
+    /* 밑줄 위로 1px 내려앉아, 선택된 탭이 본문과 이어질 수 있게 한다. */
+    margin-bottom: -1px;
+  }
+  .ta-tabs a:hover { color: var(--ink, inherit); }
+  /* 눌린 탭: 본문과 같은 바탕이 되고 아래 선이 끊겨 본문으로 이어진다. */
+  .ta-tabs a[aria-current="page"] {
+    background: var(--paper, var(--bg, transparent));
+    border-bottom-color: transparent;
+    color: var(--accent, var(--brand, inherit));
+    font-weight: 700;
+    position: relative; z-index: 1;
+  }
+</style>
+<nav class="ta-nav"><div class="ta-inner"><a class="ta-brand" href="index.html"><span class="ta-dot"></span>NextFinUp 종합자산관리</a><a class="ta-link" href="national-pension/index.html">국민연금</a><a class="ta-link" href="savings-pension/index.html">연금저축</a><a class="ta-link" href="irp/index.html">IRP</a><a class="ta-link" href="isa/index.html">ISA</a><a class="ta-link" href="insurance/index.html">보험</a><a class="ta-link" href="bond/index.html">채권</a><a class="ta-link" href="realestate/index.html">부동산</a></div></nav>
+  <div class="wrap">
+    <h1>종합자산관리</h1>
+    <p class="lead">국민연금부터 개인연금 · 보험까지, 노후 자산을 이루는 제도를 한자리에서 봅니다.</p>
+
+    <h2 class="sec">노후소득 3층 구조</h2>
+    <div class="layers">
+      <div class="layer"><span class="n">3층</span><span class="name">개인연금</span><span class="items">연금저축 · IRP · ISA</span><span class="desc">스스로 준비하는 층. 세제 혜택이 핵심입니다.</span></div><div class="layer"><span class="n">2층</span><span class="name">퇴직연금</span><span class="items">IRP · DB · DC</span><span class="desc">직장 생활에서 쌓이는 층.</span></div><div class="layer"><span class="n">1층</span><span class="name">국민연금</span><span class="items">노령연금 · 연기연금</span><span class="desc">가장 아래에서 받치는 층. 평생 지급됩니다.</span></div>
+    </div>
+
+    <h2 class="sec">영역별 안내</h2>
+    <div class="cards">
+      <a class="card" href="national-pension/index.html"><h3>국민연금 &rarr;</h3><p>국가가 운영하는 노후 소득의 1층. 가입·수령 조건과 50~60대 활용 전략.</p></a><a class="card" href="savings-pension/index.html"><h3>연금저축 &rarr;</h3><p>세액공제를 받으며 직접 쌓는 사적연금. 상품별 비교와 상담 신청.</p></a><a class="card" href="irp/index.html"><h3>IRP &rarr;</h3><p>퇴직금과 추가 납입을 함께 굴리는 개인형 퇴직연금 계좌.</p></a><a class="card" href="isa/index.html"><h3>ISA &rarr;</h3><p>예금·펀드·주식을 한 계좌에 담고 순이익에 비과세를 받는 만능통장.</p></a><a class="card" href="insurance/index.html"><h3>보험 &rarr;</h3><p>손해보험 · 생명보험 · 변액보험. 보상 방식이 어떻게 다른지부터.</p></a><a class="card" href="bond/index.html"><h3>채권 &rarr;</h3><p>빌려주고 이자를 받는 자산. 금리·신용 리스크와 투자 타이밍까지.</p></a><a class="card" href="realestate/index.html"><h3>부동산 &rarr;</h3><p>지역별 특성과 예산·목적으로 좁히는 투자 유형. 계약 전 체크리스트.</p></a>
+    </div>
+
+    <footer>
+      <strong>NextFinUp</strong> · 교육용 일반 정보이며 특정 상품의 가입 권유가 아닙니다.
+      제도는 개정될 수 있으므로 실제 결정 전 최신 규정을 확인하세요.
+    </footer>
+  </div>
+</body>
+</html>
